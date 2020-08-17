@@ -1,0 +1,182 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>侧边导航</title>
+		<style>
+			html {
+			height: 100%;
+			background-color: #fff;
+			width: 100%;
+			margin: 0;
+			padding: 0;
+		}
+
+		body {
+			background-color: #fff;
+			padding: 0;
+			margin: 0;
+			display: -webkit-box;
+			display: -webkit-flex;
+			display: flex;
+			height: 100%;
+			-webkit-box-orient: vertical;
+			-webkit-flex-flow: column;
+			flex-flow: column;
+		}
+	</style>
+	</head>
+
+	<body>
+		<script type="text/javascript" src="script/api.js"></script>
+		<script type="text/javascript" src="script/api_extend.js"></script>
+		<script type="text/javascript" src="script/vue.min.js"></script>
+		<script type="text/javascript" src="script/vue_cacheimg.js"></script>
+		<script type="text/javascript" src="script/db.js"></script>
+		<script type="text/javascript" src="script/jquery1.6.4.js"></script>
+		<script src="script/jquery.signalR-2.1.2.min.js" type="text/javascript"></script>
+		<script>
+			// var connection = null; //收消息
+			var connection2 = null; //发消息
+			// var pushSys = null;
+			var TaskManageHub = null;
+			var MainHub2 = null;
+			var hardWearParams = {}; //设备信息
+			apiready = function() {
+				// var TIMEDIFFERENCE = 0;
+				// var netTime = api.require('netTime');
+				// var date = new Date(netTime.getTime());
+				// console.warn('获取的时间'+date.getTime())
+				// console.warn('本地时间'+new Date().getTime())
+				// console.warn(new Date(date).getTime() - new Date().getTime())
+				// TIMEDIFFERENCE = new Date(date).getTime() - new Date().getTime();
+				// var demo = api.require('timer');
+				// demo.startTimer({
+				// 	delay: 0,
+				// 	period: 1000,
+				// 	isLoop: true
+				// }, function(ret) {
+				// 	var a = parseInt(new Date().getTime());
+				// 	var b = a + TIMEDIFFERENCE
+				// 	console.log('获取的时间'+new Date()+'运算后的时间'+new Date(b)+'网络时间'+new Date(netTime.getTime()))
+				// });
+				initListener();
+				//判断登录
+				// var userInfo = $api.getStorage('userInfoData');
+				// if (!userInfo) {
+				api.openWin({
+					name: 'login',
+					url: 'html/login/login.html',
+					bounces: false,
+				});
+				// } else {
+				// 	$api.send('loginSuccess');
+				// }
+
+			}
+			//内部消息监听
+			function initListener() {
+				//监听进入后台
+				$api.listener('listenResume', function() {
+					listenResume()
+				})
+				//登陆成功之后,与推送服务连接,由于连接时必须携带个人信息,所以登录成功之后再连接
+				$api.listener('loginSuccess', function(params) {
+					//选择区域
+					//					openLayOut();
+					connectionFlag = false;
+					getMyArea();
+					//连接signalR
+					// initSignalR_PushManageServer();
+				})
+
+				api.addEventListener({
+					name: 'keyback'
+				}, function(ret, err) {
+					// $api.send('logOut');
+					$api.closeWidget();
+				});
+				api.addEventListener({
+					name: 'offLine'
+				}, function(ret, err) {
+					$api.alert("网络异常，请检查网络")
+				});
+
+			}
+
+			//与推送服务连接
+
+			//选择值守区域
+			function openLayOut() {
+				api.openWin({
+					name: 'selectArea',
+					url: 'html/selectArea/selectArea.html',
+					pageParam: {
+						type: 0,
+					}
+				});
+				// api.openDrawerLayout({
+				// 	name: 'selectArea',
+				// 	url: 'html/selectArea/selectArea.html',
+				// 	animation: {
+				// 		type: 'push'
+				// 	},
+				// 	leftPane: {
+				// 		name: 'fixed',
+				// 		url: 'html/fixed.html',
+				// 		edge: 100
+				// 	}
+				// });
+			}
+
+			function openDrawerLayout() {
+				api.openDrawerLayout({
+					name: 'slide',
+					url: 'html/slide.html',
+					animation: {
+						type: 'none'
+					},
+					leftPane: {
+						name: 'fixed',
+						url: 'html/fixed.html',
+						edge: 100
+					}
+				});
+			};
+
+			//获取我的区域
+			function getMyArea() {
+				var param = {
+					UserID: $api.getStorage("userInfoData").UserID
+				};
+				$api.ajax({
+					url: rootURL_web + '/api/DaXing_Mobile/GetMyArea',
+					method: "get",
+					values: param,
+				}, function(ret, err) {
+					console.warn(JSON.stringify(ret));
+					console.warn(JSON.stringify(err));
+
+					if (ret.success) {
+						if (ret.data.length > 0) {
+							openDrawerLayout();
+						} else {
+							openLayOut()
+						}
+					} else {
+						openLayOut();
+					}
+					setTimeout(function() {
+						api.closeWin({
+							name: 'login'
+						})
+					}, 600);
+				})
+			}
+		</script>
+	</body>
+
+</html>
