@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+	<title>title</title>
+	<link rel="stylesheet" type="text/css" href="../../css/api.css" />
+	<style>
+		html,
+		body {
+			margin: 0;
+			padding: 0;
+			height: 100%;
+			width: 100%;
+			background: rgba(231, 237, 248, 1);
+		}
+
+		#app {
+			margin: 0;
+			padding: 0;
+			height: 100%;
+			width: 100%;
+			overflow-x: hidden;
+			font-family: SourceHanSansCN-Regular;
+			font-weight: 400;
+			color: rgba(51, 51, 51, 1);
+		}
+
+		.header {
+			position: relative;
+			height: 160px;
+			background: linear-gradient(-30deg, rgba(40, 99, 183, 1), rgba(12, 68, 146, 1));
+		}
+
+		.title {
+			text-align: center;
+			color: rgba(255, 255, 255, 1);
+			font-size: 20px;
+			position: absolute;
+			left: 50%;
+			top: 15%;
+			transform: translate(-50%, -15%);
+		}
+
+		.ignore {
+			text-align: center;
+			color: rgba(255, 255, 255, 1);
+			font-size: 20px;
+			position: absolute;
+			right: 2rem;
+			top: 15%;
+		}
+
+		.header .menu {
+			width: 45px;
+			height: 45px;
+			margin: 15px 10px 0;
+			font-size: 28px;
+			color: #FFFFFF;
+		}
+
+		img {
+			width: auto;
+			height: 100%;
+			align-self: center;
+		}
+
+		.task-box {
+			height: auto;
+			width: 100%;
+			/*margin-top: -100px;*/
+			display: flex;
+			flex-direction: column;
+			position: relative;
+			z-index: 99999;
+		}
+
+		.task-imgs {
+			height: auto;
+			width: 100%;
+			overflow-x: scroll;
+			overflow-y: hidden;
+			display: flex;
+			flex-direction: row;
+		}
+
+		.img-box {
+			width: 14.5rem;
+			height: 10rem;
+			flex-shrink: 0;
+			margin: 0.5rem;
+			display: flex;
+			flex-direction: column;
+			background: rgba(255, 255, 255, 1);
+			border-radius: 10px;
+			padding: .5rem .5rem 0 .5rem;
+		}
+
+		.img-src {
+			border: 1px solid rgba(204, 204, 204, 1);
+			height: 80%;
+		}
+
+		.img-info {
+			margin-top: .5rem;
+			height: 13%;
+			display: flex;
+			flex-direction: row;
+			font-size: 14px;
+		}
+
+		.img-span {
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+		}
+
+		.icon {
+			display: inline-block;
+			width: 20px;
+			height: 20px;
+			margin-right: .3rem;
+		}
+
+		i {
+			font-style: normal;
+		}
+
+		.icon-dingwei {
+			background: url(../../image/renwu/dingwei.png) center no-repeat;
+			background-size: contain;
+		}
+
+		.icon-shijian {
+			background: url(../../image/renwu/shijian-blue.png) center no-repeat;
+			background-size: contain;
+		}
+
+		.icon-paizhao {
+			background: url(../../image/gaowei/xiangji.png) center no-repeat;
+			background-size: contain;
+		}
+
+		.icon-device {
+			background: url(../../image/gaowei/shebie1.png) center no-repeat;
+			background-size: contain;
+		}
+
+		.icon-zhishen {
+			background: url(../../image/gaowei/shebei.png) center no-repeat;
+			background-size: contain;
+		}
+
+		.icon-type {
+			background: url(../../image/gaowei/type.png) center no-repeat;
+			background-size: contain;
+		}
+
+		.icon-user {
+			background: url(../../image/gaowei/user.png) center no-repeat;
+			background-size: contain;
+		}
+
+		.icon-shibie {
+			background: url(../../image/gaowei/shibie.png) center no-repeat;
+			background-size: contain;
+		}
+
+		.icon-chayan {
+			background: url(../../image/gaowei/tuxiang.png) center no-repeat;
+			background-size: contain;
+		}
+
+		.task-info {
+			display: flex;
+			flex-direction: column;
+			height: 100%;
+			padding: 1rem;
+			flex: 1;
+			overflow-y: auto;
+		}
+
+		.part {
+			display: flex;
+			flex-direction: row;
+			/*height: 200px;*/
+			height: auto;
+			flex-shrink: 0;
+		}
+
+		.left {
+			width: 15%;
+			/*height: 100%;*/
+			position: relative;
+			display: flex;
+			flex-direction: row;
+			/*align-items: stretch;*/
+		}
+
+		.right {
+			margin-left: 1rem;
+			margin-bottom: 1rem;
+			width: 81%;
+			height: auto;
+			background: rgba(255, 255, 255, 1);
+			border-radius: 10px;
+		}
+
+		.right1 {
+			width: 60%;
+			padding: 0 .5rem .5rem .5rem;
+		}
+
+		.img-waiguan {
+			/*width: 19rem;*/
+			width: 100%;
+			height: 11rem;
+			border: 1px solid rgba(204, 204, 204, 1);
+			display: flex;
+			flex-direction: column;
+			overflow: hidden;
+		}
+
+		.waiguan {
+			display: flex;
+			flex-direction: row;
+			padding: .5rem;
+			font-weight: 500;
+		}
+
+		.timesolt {
+			width: 70%;
+			/*height: 100%;*/
+			text-align: center;
+		}
+
+		.timeline {
+			position: relative;
+			width: 20%;
+			/*height: 100%;*/
+			border-right: 1px solid rgba(188, 211, 240, 1);
+			z-index: 10;
+		}
+
+		.timeImg {
+			width: 20px;
+			height: 20px;
+			position: absolute;
+			right: -10px;
+			top: 10px;
+			z-index: 100;
+			background: rgba(188, 211, 240, 1);
+			border-radius: 50%;
+		}
+
+		.img-device {
+			display: flex;
+			flex-direction: row;
+			width: 99%;
+			padding: .3rem;
+		}
+
+		.img-con {
+			border: 1px solid rgba(204, 204, 204, 1);
+			height: 9rem;
+			display: flex;
+			flex-direction: column;
+			overflow: hidden;
+		}
+
+		.img-main,
+		.img-right {
+			width: 45%;
+			height: 11rem;
+			margin-right: .5rem;
+			padding: 0 .3rem;
+		}
+
+		.device-title {
+			margin-top: .2rem;
+			font-size: 16px;
+			text-align: center;
+			color: rgba(102, 102, 102, 1);
+		}
+
+		.device-conclu {
+			display: flex;
+			flex-direction: row;
+			background: rgba(145, 168, 210, 1);
+			border-radius: 0px 0px 10px 10px;
+			padding: 0 .5rem;
+			height: 2rem;
+			line-height: 2rem;
+			color: rgba(255, 255, 255, 1);
+		}
+
+		.conclu {
+			background: rgba(230, 76, 76, 1);
+			border-radius: 3px;
+			color: rgba(255, 255, 255, 1);
+			height: 1.5rem;
+			line-height: 1.5rem;
+			padding: 0 5px;
+		}
+
+		.img {
+			display: flex;
+			flex-direction: row;
+			flex-wrap: wrap;
+			padding: 0 .5rem .5rem;
+		}
+
+		.imgList {
+			width: 46%;
+			height: 8rem;
+			margin: .5rem .5rem 0 .5rem;
+			position: relative;
+		}
+
+		.delete {
+			position: absolute;
+			width: 30px;
+			height: 30px;
+			background: url(../../image/delete.png) no-repeat;
+			background-size: 100% 100%;
+			top: -10px;
+			right: -15px;
+		}
+
+		.user {
+			padding: 0 .5rem .5rem 2rem;
+		}
+
+		.user-col {
+			height: 2rem;
+			line-height: 2rem;
+		}
+
+		.submit {
+			flex: 1;
+			justify-content: flex-end;
+			text-align: right;
+			font-size: 16px;
+		}
+
+		.tijiao {
+			display: inline-block;
+			width: 8rem;
+			background: rgba(251, 158, 37, 1);
+			border-radius: 20px;
+			color: rgba(255, 255, 255, 1);
+			text-align: center;
+			padding: 5px 0;
+			/*height: 2rem;
+				line-height: 2rem;*/
+		}
+
+		.imgAdd {
+			width: 46%;
+			height: 8rem;
+			border: 1px solid rgba(204, 204, 204, 1);
+			font-size: 50px;
+			display: flex;
+			align-items: center;
+			margin: .5rem .5rem 0 .5rem;
+			background: rgba(242, 246, 252, 1);
+		}
+
+		.jiahao {
+			text-align: center;
+			flex: 1;
+			color: rgba(0, 0, 0, 0.24);
+		}
+
+		[v-cloak] {
+			display: none !important;
+		}
+	</style>
+</head>
+
+<body>
+	<div id="app" v-cloak>
+		<!--<div class="header">
+				<a class="menu" tapmode="" onclick="sliding()">
+					<img src="../../image/header.png" style="height: 100%;width: 100%;" />
+				</a>
+				<div class="title">任务详情</div>
+				<div class="ignore" onclick="ignoreTask()">忽略</div>
+			</div>-->
+		<div class="task-box">
+			<!--<div class="task-imgs">
+					<div class="img-box" v-for="item in taskList">
+						<div class="img-src">
+							<img :src="item.ImageURL"  @click="imageView(item.ImageURL,event)"/>
+						</div>
+						<div class="img-info">
+							<span class="img-span">
+								<i class="icon icon-dingwei"></i>
+								<i>{{item.AreaCode}}</i>
+							</span><span class="img-span" style="flex:1;justify-content: flex-end;">
+								<i class="icon icon-shijian"></i>
+								<i>{{item.CreateTime}}</i>
+							</span>
+						</div>
+					</div>
+				</div>-->
+			<div class="task-info">
+				<div class="part">
+					<div class="left">
+						<div class="timesolt">
+							<p>
+								{{Appearance.CreateTime}}
+							</p>
+							<!--<p>
+									09:31
+								</p>-->
+						</div>
+						<div class="timeline">
+							<div class="timeImg"></div>
+						</div>
+					</div>
+					<div class="right right1">
+						<p class="waiguan">
+							<span class="icon icon-paizhao"></span>
+							<span>外观采集</span>
+						</p>
+						<div>
+							包裹号:{{LuggageIdeni.PRN}}
+						</div>
+						<div class="img-waiguan">
+							<img :src="Appearance.AppearanceImageURL" @click="imageView(Appearance.AppearanceImageURL,event)" />
+						</div>
+					</div>
+				</div>
+				<div class="part">
+					<div class="left">
+						<div class="timesolt">
+							<p>
+								{{DeviceJudge.CreateTime}}
+							</p>
+						</div>
+						<div class="timeline">
+							<div class="timeImg"></div>
+						</div>
+					</div>
+					<div class="right">
+						<p class="waiguan">
+							<span class="icon icon-device"></span>
+							<span>设备判图</span>
+						</p>
+						<div class="img-device">
+							<div class="img-main" v-for="item in DeviceJudge.ImageURL" v-show="DeviceJudge.ImageURL&&item.Name!='3d'">
+								<div class="img-con">
+									<img :src="item.ImageURL" @click="imageView(item.ImageURL,event)" />
+									<!-- <img :src="DeviceJudge.ImageURL[0].ImageURL" v-if="DeviceJudge.ImageURL" @click="imageView(DeviceJudge.ImageURL[0].ImageURL,event)" /> -->
+								</div>
+								<p class="device-title" v-if="item.Name=='source'">主视角扫描图</p>
+								<p class="device-title" v-if="item.Name=='side'">侧视角扫描图</p>
+							</div>
+							<!-- <div class="img-right">
+								<div class="img-con">
+									<img :src="DeviceJudge.ImageURL[1].ImageURL" v-if="DeviceJudge.ImageURL" @click="imageView(DeviceJudge.ImageURL[1].ImageURL,event)" />
+								</div>
+								<p class="device-title">侧视角扫描图</p>
+							</div> -->
+						</div>
+						<div class="device-conclu">
+							<span class="img-span">
+								<i class="icon icon-zhishen"></i>
+								<i style="margin-right: 12px;">智审结论</i>
+								<i class="conclu" v-if="DeviceJudge.Conclusion==0">安全</i>
+								<i class="conclu" v-else-if="DeviceJudge.Conclusion==1">嫌疑</i>
+								<i class="conclu" v-else="DeviceJudge.Conclusion==4">高危</i>
+							</span><span class="img-span" style="flex:1;justify-content: flex-end;">
+								<i class="icon icon-type"></i>
+								<i style="margin-right: 12px;">嫌疑物类别</i>
+								<!-- <i class="conclu">{{DeviceJudge.SuspectsType}}</i> -->
+									<i class="conclu">无</i>
+							</span>
+						</div>
+					</div>
+				</div>
+				<!--集中判图-->
+				<!--<div class="part">
+						<div class="left">
+							<div class="timesolt">
+								<p>
+									{{CentralJudge.CreateTime}}
+								</p>
+							</div>
+							<div class="timeline">
+								<div class="timeImg"></div>
+							</div>
+						</div>
+						<div class="right">
+							<p class="waiguan">
+								<span class="icon icon-user"></span>
+								<span>集中判图</span>
+							</p>
+							<div class="user">
+								<p class="user-col">判图员：{{CentralJudge.JudgeUser}}</p>
+								<p class="user-col">判图时间：{{CentralJudge.CreateTime}}</p>
+							</div>
+							<div class="device-conclu">
+								<span class="img-span">
+								<i class="icon icon-type"></i>
+								<i style="margin-right: 12px;">判图结论</i>
+								<i class="conclu" v-if="CentralJudge.Conclusion==0">安全</i>
+								<i class="conclu" v-else-if="CentralJudge.Conclusion==1">嫌疑</i>
+								<i class="conclu" v-else="CentralJudge.Conclusion==4">高危</i>
+							</span>
+							</div>
+						</div>
+					</div>-->
+				<!--<div class="part">
+						<div class="left">
+							<div class="timesolt">
+								<p>
+									{{LuggageIdeni.CreateTime}}
+								</p>
+							</div>
+							<div class="timeline">
+								<div class="timeImg"></div>
+							</div>
+						</div>
+						<div class="right">
+							<p class="waiguan">
+								<span class="icon icon-shibie"></span>
+								<span>箱体识别</span>
+							</p>
+							<div class="user">
+								<p class="user-col">位置：{{LuggageIdeni.TurnName}}</p>
+								<p class="user-col">行李条码：{{LuggageIdeni.PRN}}</p>
+								<p class="user-col">识别时间：{{LuggageIdeni.CreateTime}}</p>
+							</div>
+						</div>
+					</div>-->
+				<!--查验拍照-->
+				<!--<div class="part">
+						<div class="left">
+							<div class="timesolt">
+								<p>
+									04-01
+								</p>
+								<p>
+									09:31
+								</p>
+							</div>
+							<div class="timeline">
+								<div class="timeImg"></div>
+							</div>
+						</div>
+						<div class="right">
+							<p class="waiguan">
+								<span class="icon icon-chayan"></span>
+								<span>查验拍照</span>
+								<span class="submit" onclick="uploadImg()">
+									<a class="tijiao">提交</a>
+								</span>
+							</p>
+							<div class="img">
+								<div class="imgList" v-for="item in snapshot">
+									<img :src="item.ImageURL" @click="imageView(item.ImageURL,event)">
+								</div>
+								<div class="imgList" v-for="item in imgList">
+									<img :src="item" @click="imageView(item,event)">
+									<span class="delete" @click="deletePic(item)"></span>
+								</div>
+								<div class="imgAdd" onclick="selectPic()">
+									<div class="jiahao">+</div>
+								</div>
+							</div>
+						</div>
+					</div>-->
+			</div>
+		</div>
+	</div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/api_extend.js"></script>
+<script type="text/javascript" src="../../script/vue.min.js"></script>
+<script type="text/javascript" src="../../script/jquery.min.js"></script>
+<script type="text/javascript">
+	function initvm() {
+		vm = new Vue({
+			el: '#app',
+			data: {
+				snapshot: [],
+				imgList: [],
+				currentTaskID: "",
+				CentralJudge: {},
+				LuggageIdeni: {},
+				DeviceJudge: {},
+				Appearance: {}
+			},
+			mounted: function() {
+				this.currentTaskID = api.pageParam.TaskID;
+				this.taskList = $api.getAllData("TurnTask");
+			},
+			methods: {
+				deletePic: function(item) {
+					var index = vm.imgList.indexOf(item);
+					vm.imgList.splice(index, 1)
+				},
+				imageView: function(image_, event_) {
+					var url_ = "../imageView/imageViewFrame.html"
+					$api.imageView(image_, 0, event_, url_);
+				},
+			}
+		})
+	}
+	apiready = function() {
+		initvm();
+		//			console.warn(vm.currentTaskID)
+		getTaskDetail();
+	};
+
+	function sliding() {
+		api.openDrawerPane({
+			type: 'left'
+		});
+	}
+	//根据taskid任务详情
+	function getTaskDetail() {
+		var param = {
+			TaskID: vm.currentTaskID
+		};
+		$api.ajax({
+			url: rootURL_web + '/api/DaXing_Mobile/GetTaskDetail',
+			method: "get",
+			values: param,
+		}, function(ret, err) {
+			console.warn("--------任务详情-------");
+			console.warn(JSON.stringify(ret));
+			console.warn(JSON.stringify(err));
+			if (ret.success) {
+				vm.snapshot = ret.data.Snapshot ? ret.data.Snapshot : []; //图片
+				vm.Appearance = ret.data.DangerDetail.Appearance ? ret.data.DangerDetail.Appearance : {}; //外观图
+				vm.DeviceJudge = ret.data.DangerDetail.DeviceJudge ? ret.data.DangerDetail.DeviceJudge : {}; //设备判图
+				vm.CentralJudge = ret.data.DangerDetail.CentralJudge ? ret.data.DangerDetail.CentralJudge : {}; //集中判图
+				vm.LuggageIdeni = ret.data.DangerDetail.XBSB ? ret.data.DangerDetail.XBSB : {}; //箱包识别
+			}
+		})
+	}
+
+	function selectPic() {
+		var UIAlbumBrowser = api.require('UIAlbumBrowser');
+		UIAlbumBrowser.open({
+			max: 9,
+			styles: {
+				bg: '#fff',
+				mark: {
+					icon: '',
+					position: 'bottom_left',
+					size: 20
+				},
+				nav: {
+					bg: 'rgba(0,0,0,0.6)',
+					titleColor: '#fff',
+					titleSize: 18,
+					cancelColor: '#fff',
+					cancelSize: 16,
+					finishColor: '#fff',
+					finishSize: 16
+				}
+			},
+			rotation: true
+		}, function(ret) {
+			if (ret.list) {
+				for (var i = 0; i < ret.list.length; i++) {
+					vm.imgList.push(ret.list[i].path)
+				}
+			}
+		});
+	}
+
+	function uploadImg() {
+		var imageFilter = api.require('imageFilter');
+		if (vm.imgList.length > 0) {
+			var formFile = {
+				UserID: $api.getStorage('userInfoData').UserID,
+				TaskID: vm.currentTaskID
+			};
+			for (var i = 0; i < vm.imgList.length; i++) {
+				imageFilter.compress({
+					img: vm.imgList[i],
+					quality: 0.1
+				}, function(ret, err) {
+					if (ret.status) {
+						alert(JSON.stringify(ret));
+						$api.ajax({
+							url: rootURL_web + '/api/DaXing_Mobile/UploadImage',
+							method: "POST",
+							values: formFile,
+							files: {
+								file: vm.imgList
+							}
+						}, function(ret, err) {
+							console.warn("--------上传图片-------");
+							console.warn(JSON.stringify(ret));
+							console.warn(JSON.stringify(err));
+							if (ret) {
+								if (ret.success) {
+									$api.toast("上传成功");
+								} else {
+									$api.toast(ret.msg);
+								}
+							} else {
+								$api.toast(err.msg);
+							}
+
+						})
+					} else {
+						alert(JSON.stringify(err));
+					}
+				});
+			}
+		} else {
+			$api.toast("请选择图片后再提交");
+		}
+	}
+	//忽略本条任务
+	function ignoreTask() {
+		var params = {
+			UserID: $api.getStorage('userInfoData').UserID,
+			TaskID: vm.currentTaskID
+		}
+		$api.ajax({
+			url: rootURL_web + '/api/DaXing_Mobile/IgnoreTask',
+			method: "GET",
+			values: params,
+		}, function(ret, err) {
+			console.warn("--------忽略任务-------");
+			console.warn(JSON.stringify(ret));
+			console.warn(JSON.stringify(err));
+			if (ret) {
+				if (ret.success) {
+					var taskList = $api.getGlobalData('TurnTask') ? $api.getGlobalData('TurnTask') : [];
+					for (var i = taskList.length - 1; i >= 0; i--) {
+						if (vm.currentTaskID == taskList[i].TaskID) {
+							taskList.splice(i, 1);
+							break;
+						}
+					}
+					$api.setGlobalData('TurnTask', taskList);
+					$api.send('TurnTaskChange');
+					$api.toast("成功忽略当前任务");
+					api.closeFrame({
+						name: "turntableDetail"
+					});
+				} else {
+					$api.toast(ret.msg);
+				}
+			} else {
+				$api.toast(err.msg);
+			}
+
+		})
+	}
+</script>
+
+</html>

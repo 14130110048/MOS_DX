@@ -1,0 +1,74 @@
+<!DOCTYPE HTML>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width" />
+		<meta name="format-detection" content="telephone=no, email=no, date=no, address=no">
+		<title>查看图片</title>
+		<link rel="stylesheet" type="text/css" href="../css/api.css" />
+		<style>
+			html,
+			body{
+				width: 100%;
+				height: 100%;
+				margin: 0;
+				padding: 0;
+			}
+		</style>
+	</head>
+
+	<body>
+	</body>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script type="text/javascript" src="../../script/api_extend.js"></script>
+	<script type="text/javascript">
+		apiready = function() {
+			imageView();
+		}
+
+		function imageView() {
+			var photoBrowser = api.require('photoBrowser');
+			photoBrowser.open({
+				images: api.pageParam.imageSrcArr,
+				// placeholderImg: 'widget://res/img/apicloud.png',
+				bgColor: '#000',
+				activeIndex: api.pageParam.index
+			}, function(ret, err) {
+				if(ret) {
+					// alert(JSON.stringify(ret));
+					// openCloseButton()
+					if(ret.eventType == 'click') {
+						// photoBrowser.close();
+						// setTimeout(function(){
+						api.closeWin()
+						// })
+					}
+				} else {
+					// alert(JSON.stringify(err));
+				}
+			});
+		}
+
+		function openCloseButton() {
+			api.openFrame({
+				name: 'closeImageViewer',
+				url: 'close_imageViewFrame.html',
+				rect: {
+					x: 120,
+					y: 120,
+					w: 50,
+					h: 50
+				},
+				pageParam: {
+					name: 'test'
+				},
+				bounces: false,
+				vScrollBarEnabled: true,
+				hScrollBarEnabled: true,
+				useWKWebView: true
+			});
+		}
+	</script>
+
+</html>

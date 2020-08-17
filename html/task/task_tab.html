@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+	<title>title</title>
+	<link rel="stylesheet" type="text/css" href="../css/api.css" />
+	<style>
+		html,
+		body {
+			margin: 0;
+			padding: 0;
+			height: 100%;
+			width: 100%;
+		}
+
+		#app {
+			margin: 0;
+			padding: 0;
+			height: 100%;
+			width: 100%;
+			position: relative;
+		}
+
+		.tab {
+			padding: 0 4rem;
+			/*margin-top: -25px;*/
+			z-index: 100;
+		}
+
+		.tab-box {
+			width: 100%;
+			height: 50px;
+			border: 1px solid seagreen;
+			background: rgba(255, 255, 255, 1);
+			border-radius: 72px;
+			display: flex;
+			flex-direction: row;
+		}
+
+		.tab1,
+		.tab2 {
+			flex: 1;
+			text-align: center;
+			line-height: 40px;
+			color: rgba(191, 197, 205, 1);
+			font-size: 18px;
+			width: 100%;
+		}
+
+		span {
+			display: inline-block;
+		}
+
+		.tab-span {
+			margin-top: 5px;
+			line-height: 40px;
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			justify-content: center;
+		}
+
+		.tab-active {
+			margin-top: 5px;
+			color: #FFFFFF;
+			height: 40px;
+			background: rgba(51, 129, 239, 1);
+			width: 90%;
+			border-radius: 72px;
+			margin-left: 5%;
+		}
+
+		.tab-img {
+			margin-right: 10px;
+			width: 30px;
+			height: 30px;
+		}
+
+		.tab-title {
+			height: 40px;
+			line-height: 40px;
+			font-size: 22px;
+		}
+
+		img {
+			width: 100%;
+			height: 100%;
+		}
+	</style>
+</head>
+
+<body>
+	<div id="app">
+		<div class="tab">
+			<div class="tab-box">
+				<div class="tab1" onclick="openTab(0)">
+					<span class="tab-span" :class="currentIndex==0?'tab-active':''">
+							<span class="tab-img"><img src="../../image/renwu/ZP-light.png" v-if="currentIndex==0">
+								<img src="../../image/renwu/ZP.png" v-else></span>
+					<span class="tab-title">行李转盘</span>
+					</span>
+				</div>
+				<div class="tab2" onclick="openTab(1)">
+					<span class="tab-span" :class="currentIndex==1?'tab-active':''">
+							<span class="tab-img"><img src="../../image/renwu/tongdao-light.png" v-if="currentIndex==1">
+								<img src="../../image/renwu/tongdao.png" v-else></span>
+					<span class="tab-title">智能通道</span></span>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/api_extend.js"></script>
+<script type="text/javascript" src="../../script/vue.min.js"></script>
+<script type="text/javascript" src="../../script/jquery1.6.4.js"></script>
+<script src="../../script/jquery.signalR-2.1.2.min.js" type="text/javascript"></script>
+<script>
+	var vm;
+	var connection = null; //收消息
+	var pushSys = null;
+	var connectionFlag = false; //如果是主動斷開的話 不會重连
+	function initvm() {
+		vm = new Vue({
+			el: '#app',
+			data: {
+				currentIndex: 0
+			},
+			methods: {
+
+			}
+		})
+	}
+
+	function openTab(index) {
+		vm.currentIndex = index;
+		api.setFrameGroupIndex({
+			name: 'alarm_group',
+			scroll: true,
+			index: index
+		});
+
+	}
+	apiready = function() {
+		//沉浸式
+		$api.fixStatusBar($api.dom('.header'));
+		initvm();
+		var TIMEDIFFERENCE = 0
+		var netTime = api.require('netTime');
+		var time_net = 0
+		var date;
+		if (time_net == 0 || time_net == "0" || (new Date(time_net).toString()).indexOf('1970') > -1) {
+			flog("时间同步模块获取时间为0，用本地时间");
+			date = new Date().getTime();
+		} else {
+			date = new Date(time_net);
+		}
+		// var date = new Date(netTime.getTime())?new Date(netTime.getTime()):new Date().getTime();
+		// if(date.indexOf('1970')>-1){
+		// 	date =new Date().getTime()
+		// }
+		console.log('获取到服务器时间：' + date)
+		flog('获取到服务器时间：' + date)
+		TIMEDIFFERENCE = new Date(date).getTime() - new Date().getTime();
+		flog('时间差值为：' + TIMEDIFFERENCE)
+
+		api.openFrameGroup({
+			name: 'alarm_group',
+			rect: {
+				x: 0,
+				y: 110,
+				w: 'auto',
+				//						h: 'auto'
+			},
+			frames: [{
+				name: 'turntable',
+				url: './turntable.html',
+			}, {
+				name: 'channel',
+				url: './channel.html',
+			}]
+		}, function(ret, err) {
+			var index = ret.index;
+			vm.currentIndex = index;
+		});
+		initSignalR_PushManageServer()
+			//监听退出登录
+		$api.listener('logOut',
+			function() {
+				$api.rmStorage('userInfoData');
+				$api.setGlobalData('TurnTask', '');
+				$api.setGlobalData('allTaskList', '');
+				$api.setGlobalData('GateTask', '');
+				$api.setGlobalData('notifyList', '');
+				connectionFlag = true;
+				connection.stop();
+				var demo = api.require('timer');
+				demo.stopTimer(function(ret) {
+					// alert(JSON.stringify(ret));
+				});
+			});
+
+		//开启定时器，1s一次，行李转盘倒计时以秒为单位
+		var demo = api.require('timer');
+		demo.startTimer({
+			delay: 0,
+			period: 1000,
+			isLoop: true
+		}, function(ret) {
+			var taskList = $api.getGlobalData('TurnTask') ? $api.getGlobalData('TurnTask') : [];
+			for (var i = taskList.length - 1; i >= 0; i--) {
+				//IsArrive为是否达到，true已到达，false未到达，未达到时进行倒计时或者即将到达判断
+				if (taskList[i].IsArrive) {
+					taskList[i].timer = -1;
+				} else {
+					if (taskList[i].timer >= 0) {
+						// taskList[i].timer--;
+						let time = Math.floor((new Date(taskList[i].PresetArriveDateTime).getTime() - (parseInt(new Date().getTime()) + TIMEDIFFERENCE)) / 1000);
+						taskList[i].timer = time;
+						if (taskList[i].timer <= 0) {
+							if (taskList[i].isNotify) {
+								taskList[i].timer = -1;
+							} else {
+								taskList[i].timer = 0;
+							}
+						}
+					} else if (taskList[i].timer < 0) {
+						taskList[i].timer = -1;
+					} else {
+						taskList[i].timer = taskList[i].PresetArriveTime;
+						// taskList[i].timer="";
+					}
+				}
+			}
+			$api.setGlobalData('TurnTask', taskList);
+			$api.send('TurnTaskChange');
+		});
+	};
+	//推送服务连接
+	function initSignalR_PushManageServer() {
+		connectionFlag = false;
+		SignalRClient({
+			"AppID": "APPID_DXM",
+			"ClientID": api.deviceId,
+			"UserID": $api.getStorage('userInfoData').UserID,
+			OnMessage: function(msg) {}
+		});
+	}
+
+	function SignalRClient(_option) {
+		if (connection != null) {
+			connection = null;
+		}
+		$api.send('signalRStart')
+			// 不生成代理
+		connection = $.hubConnection($api.getStorage('PushServiceAddress') + "/signalr/", {
+			useDefaultPath: false,
+			logging: true,
+			// 参数
+			qs: {
+				"AppID": _option.AppID,
+				"ClientID": _option.ClientID,
+				"UserID": _option.UserID
+			}
+		});
+		// 以下是所有的生命周期事件
+		connection.received(function() {
+			console.log('received', connection);
+			flog('收到消息', connection)
+		});
+		connection.connectionSlow(function() {
+			console.log("connectionSlow", connection);
+			$api.send('reconnecting')
+			flog('连接缓慢', connection)
+		});
+		connection.reconnecting(function() {
+			console.log("reconnecting", connection);
+			$api.send('reconnecting')
+			flog('正在自动重连', connection)
+		});
+		connection.reconnected(function() {
+			console.log("reconnected", connection);
+			$api.send('reconnected')
+			flog('自动重连成功', connection)
+		});
+		connection.stateChanged(function() {
+			console.log("stateChanged", connection);
+			// flog('状态变化', connection)
+		});
+		connection.disconnected(function() {
+			$api.toast('网络异常，与推送服务连接断开');
+			if (connectionFlag) {
+				return;
+			}
+			flog('弹出提示', connection)
+			api.confirm({
+				title: '提示',
+				msg: '网络断开,是否重新连接？',
+				buttons: ['重试', '取消']
+			}, function(ret, err) {
+				connection.stop();
+				if (ret) {
+					if (ret.buttonIndex == 2) {
+						api.openWin({
+							name: 'login',
+							url: '../login/login.html',
+							bounces: false,
+						});
+					} else {
+						flog('选择手动重连')
+						SignalRClient({
+							"AppID": "APPID_DXM",
+							"ClientID": api.deviceId,
+							"UserID": $api.getStorage('userInfoData').UserID,
+							OnMessage: function(msg) {}
+						})
+					}
+				}
+			});
+		});
+		// 异常处理
+		connection.error(function(error) {
+			console.log("signalr error" + error);
+			// alert('与推送服务连接报错')
+			// $api.toast('与推送服务连接报错')
+		});
+		pushSys = connection.createHubProxy("MainHub");
+		pushSys.on("message", function(msg_) {
+			console.log("MainHub" + msg_)
+			flog('消息内容MainHub：' + msg_)
+			if (_option.OnMessage) {
+				_option.OnMessage(msg_);
+			}
+			var msg = JSON.parse(msg_);
+			//任务状态变化消息
+			if (msg.MessageType == 'AddTurnTaskMsg') {
+				var tasks = msg.Body.Tasks;
+				var taskList = $api.getGlobalData('TurnTask') ? $api.getGlobalData('TurnTask') : [];
+				var allTaskList = $api.getGlobalData('allTaskList') ? $api.getGlobalData('allTaskList') : [];
+				// console.warn(tasks);
+				for (var i = 0; i < tasks.length; i++) {
+					tasks[i].isNotify = false;
+					tasks[i].timer = tasks[i].PresetArriveTime;
+					taskList.unshift(tasks[i]);
+					if (allTaskList.length >= 4) {
+						allTaskList.pop();
+						allTaskList.unshift(tasks[i]);
+					} else {
+						allTaskList.unshift(tasks[i]);
+					}
+				}
+				if (taskList.length > 100) {
+					taskList.length = 100;
+				}
+				$api.setGlobalData('TurnTask', taskList);
+				$api.send('TurnTaskChange');
+				$api.setGlobalData('allTaskList', allTaskList);
+				$api.send('allTaskChange');
+				setTimeout(function() {
+					//仅提示音
+					// api.notification({
+					// 	sound: 'default'
+					// });
+					//提示音+震动
+					api.notification();
+				}, 500);
+			} else if (msg.MessageType == 'AddGateTaskMsg') {
+				var tasks = msg.Body.Tasks;
+				var taskList = $api.getGlobalData('GateTask') ? $api.getGlobalData('GateTask') : [];
+				var allTaskList = $api.getGlobalData('allTaskList') ? $api.getGlobalData('allTaskList') : [];
+
+				for (var i = 0; i < tasks.length; i++) {
+					taskList.unshift(tasks[i]);
+					$api.setGlobalData('newTaskID', tasks[i].TaskID);
+					if (allTaskList.length >= 4) {
+						allTaskList.pop();
+						allTaskList.unshift(tasks[i]);
+					} else {
+						allTaskList.unshift(tasks[i]);
+					}
+				}
+				if (taskList.length > 100) {
+					taskList.length = 100;
+				}
+				$api.setGlobalData('GateTask', taskList);
+				$api.send('GateTaskChange');
+				$api.setGlobalData('allTaskList', allTaskList);
+				$api.send('allTaskChange');
+				$api.send('newTaskIDChange');
+				setTimeout(function() {
+					//仅提示音
+					api.notification({
+						sound: 'default'
+					});
+				}, 500);
+			} else if (msg.MessageType == 'ModifyGateTask') {
+				// setTimeout(function() {
+				var tasks = msg.Body.Tasks;
+				var taskList = $api.getGlobalData('GateTask') ? $api.getGlobalData('GateTask') : [];
+				var allTaskList = $api.getGlobalData('allTaskList') ? $api.getGlobalData('allTaskList') : [];
+
+				for (var i = 0; i < tasks.length; i++) {
+					for (var j = 0; j < taskList.length; j++) {
+						if (tasks[i].TaskID == taskList[j].TaskID) {
+							let index = allTaskList.indexOf(taskList[j]);
+							if (index > -1) {
+								allTaskList[index] = task[i];
+								// allTaskList.splice(index,1,task[i]);
+							}
+							taskList[j] = task[i];
+							// taskList.splice(j,1,task[i]);
+						}
+					}
+				}
+				$api.setGlobalData('GateTask', taskList);
+				$api.send('GateTaskChange');
+				$api.setGlobalData('allTaskList', allTaskList);
+				$api.send('allTaskChange');
+				// }, 400);
+			} else if (msg.MessageType == 'DeleteGateTaskMsg') {
+				var tasks = msg.Body;
+				var taskList = $api.getGlobalData('GateTask') ? $api.getGlobalData('GateTask') : [];
+				var allTaskList = $api.getGlobalData('allTaskList') ? $api.getGlobalData('allTaskList') : [];
+
+				for (var i = taskList.length - 1; i >= 0; i--) {
+					if (tasks.TaskID == taskList[i].TaskID) {
+						taskList.splice(i, 1);
+						break;
+					}
+				}
+				for (var i = allTaskList.length - 1; i >= 0; i--) {
+					if (tasks.TaskID == allTaskList[i].TaskID) {
+						allTaskList.splice(i, 1);
+						break;
+					}
+				}
+				$api.setGlobalData('GateTask', taskList);
+				$api.send('GateTaskChange');
+				$api.setGlobalData('allTaskList', allTaskList);
+				$api.send('allTaskChange');
+			} else if (msg.MessageType == 'DeleteTurnTaskMsg') {
+				var tasks = msg.Body;
+				var taskList = $api.getGlobalData('TurnTask') ? $api.getGlobalData('TurnTask') : [];
+				var allTaskList = $api.getGlobalData('allTaskList') ? $api.getGlobalData('allTaskList') : [];
+
+				for (var i = taskList.length - 1; i >= 0; i--) {
+					if (tasks.TaskID == taskList[i].TaskID) {
+						taskList.splice(i, 1);
+						break;
+					}
+				}
+				for (var i = allTaskList.length - 1; i >= 0; i--) {
+					if (tasks.TaskID == allTaskList[i].TaskID) {
+						allTaskList.splice(i, 1);
+						break;
+					}
+				}
+				$api.setGlobalData('TurnTask', taskList);
+				$api.send('TurnTaskChange');
+				$api.setGlobalData('allTaskList', allTaskList);
+				$api.send('allTaskChange');
+			} else if (msg.MessageType == 'TurnTaskNotifyMsg') {
+				var notify = msg.Body;
+				var notifyList = $api.getGlobalData('notifyList') ? $api.getGlobalData('notifyList') : [];
+				notifyList.unshift(notify);
+				$api.setGlobalData('notifyList', notifyList);
+				$api.send('notifyListChange');
+			} else if (msg.MessageType == 'GateTaskNotifyMsg') {
+				var notify = msg.Body;
+				var notifyList = $api.getGlobalData('notifyList') ? $api.getGlobalData('notifyList') : [];
+				notifyList.unshift(notify);
+				$api.setGlobalData('notifyList', notifyList);
+				$api.send('notifyListChange');
+			} else if (msg.MessageType == 'NotifyBaggageArriveMsg') {
+				var notifyBaggage = msg.Body;
+				$api.setGlobalData('notifyBaggage', notifyBaggage);
+				$api.send('notifyBaggageChange');
+				var taskList = $api.getGlobalData('TurnTask') ? $api.getGlobalData('TurnTask') : [];
+				for (var i = taskList.length - 1; i >= 0; i--) {
+					// if (taskList[i].TaskID == notifyBaggage.TaskID&&taskList[i].timer==0) {
+					// 	taskList[i].timer = -1
+					// 	break;
+					// }
+					if (taskList[i].TaskID == notifyBaggage.TaskID) {
+						taskList[i].isNotify = true;
+						if (taskList[i].timer == 0) {
+							taskList[i].timer = -1;
+						}
+						break;
+					}
+				}
+				$api.setGlobalData('TurnTask', taskList);
+				$api.send('TurnTaskChange');
+			} else if (msg.MessageType == 'LogOutMsg') {
+				$api.toast('有其他设备正在登录您的账号');
+				$api.send('logOut');
+				api.openWin({
+					name: "login",
+					url: '../login/login.html',
+				})
+			} else if (msg.MessageType == 'OnlineTurnTaskMsg') {
+				var tasks = msg.Body.Tasks;
+				var allTaskList = $api.getGlobalData('allTaskList') ? $api.getGlobalData('allTaskList') : [];
+				for (var i = 0; i < tasks.length; i++) {
+					if (allTaskList.length < 4) {
+						allTaskList.push(tasks[i]);
+					} else {
+						break;
+					}
+				}
+				if (tasks.length > 100) {
+					tasks.length = 100;
+				}
+				$api.setGlobalData('TurnTask', tasks);
+				$api.send('TurnTaskChange');
+				$api.setGlobalData('allTaskList', allTaskList);
+				$api.send('allTaskChange');
+			} else if (msg.MessageType == 'OnlineGateTaskMsg') {
+				var tasks = msg.Body.Tasks;
+				var allTaskList = $api.getGlobalData('allTaskList') ? $api.getGlobalData('allTaskList') : [];
+				for (var i = 0; i < tasks.length; i++) {
+					if (allTaskList.length < 4) {
+						allTaskList.push(tasks[i]);
+					} else {
+						break;
+					}
+				}
+				if (tasks.length > 100) {
+					tasks.length = 100;
+				}
+				$api.setGlobalData('GateTask', tasks);
+				$api.send('GateTaskChange');
+				$api.setGlobalData('allTaskList', allTaskList);
+				$api.send('allTaskChange');
+			}
+		});
+
+		connection
+			.start()
+			.done(function() {
+				flog('手动连接成功')
+				$api.send('reconnected')
+				console.log("connection success,推送服务连接成功");
+				$api.toast('推送服务连接成功');
+				if (_option.OnConnection) _option.OnConnection();
+			})
+			.fail(function() {
+				console.log("connection fail");
+				flog('手动连接失败')
+				if (_option.OnDisConnection) _option.OnDisConnection();
+			});
+	}
+</script>
+</body>
+
+</html>

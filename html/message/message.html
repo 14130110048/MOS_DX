@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+	<title>title</title>
+	<link rel="stylesheet" type="text/css" href="../../css/api.css" />
+	<style>
+		html,
+		body {
+			margin: 0;
+			padding: 0;
+			height: 100%;
+			width: 100%;
+			background: rgba(231, 237, 248, 1);
+		}
+
+		#app {
+			margin: 0;
+			padding: 0;
+			height: 100%;
+			width: 100%;
+			font-family: SourceHanSansCN-Regular;
+			font-weight: 400;
+			overflow: hidden;
+		}
+
+		.header {
+			height: 50px;
+			background: linear-gradient(-30deg, rgba(40, 99, 183, 1), rgba(12, 68, 146, 1));
+			position: relative;
+		}
+
+		.title {
+			text-align: center;
+			color: rgba(255, 255, 255, 1);
+			font-size: 20px;
+			position: absolute;
+			left: 50%;
+			top: 50%;
+			transform: translate(-50%, -50%);
+		}
+
+		.header .menu {
+			width: 28px;
+			height: 28px;
+			margin: 0 20px;
+		}
+
+		.message {
+			padding: 0 1rem;
+			width: calc(100% - 2rem);
+			height: calc(100% - 60px);
+			overflow: auto;
+		}
+
+		.meaasge-box {
+			height: 4rem;
+			display: flex;
+			flex-direction: row;
+			background: rgba(255, 255, 255, 1);
+			border-radius: 10px;
+			margin-top: 1rem;
+			padding: .5rem;
+		}
+
+		.icon {
+			width: 3rem;
+			height: 3rem;
+			padding: .5rem;
+		}
+
+		.icon-gaowei {
+			background: url(../../image/login/jinggao.png) center no-repeat;
+			background-size: contain;
+		}
+
+		.icon-zhaji {
+			background: url(../../image/login/ai-message.png) center no-repeat;
+			background-size: contain;
+		}
+
+		.icon-channel {
+			background: url(../../image/login/lingdang.png) center no-repeat;
+			background-size: contain;
+		}
+
+		.info {
+			margin-left: 1rem;
+			flex: 1;
+			padding: .5rem;
+		}
+
+		img {
+			width: 100%;
+			height: 100%;
+		}
+
+		.title0 {
+			font-size: 18px;
+		}
+
+		.detail {
+			height: 1rem;
+			line-height: 1rem;
+			font-size: 16px;
+			margin-top: .5rem;
+			width: 100%;
+			text-overflow: ellipsis;
+			white-space: normal;
+			overflow: hidden;
+			color: rgba(102, 102, 102, 1);
+		}
+
+		.name {
+			color: rgba(51, 51, 51, 1);
+			font-size: 18px;
+		}
+
+		.time {
+			float: right;
+			color: rgba(51, 51, 51, 1);
+			font-size: 18px;
+		}
+
+		.noData {
+			text-align: center;
+			margin-top: 40px;
+		}
+
+		[v-cloak] {
+			display: none !important;
+		}
+	</style>
+</head>
+
+<body>
+	<div id="app">
+		<div class="header">
+			<a class="menu" tapmode="" onclick="sliding()">
+				<img src="../../image/renwu/back.png" style="height: 100%;width: 100%;" />
+			</a>
+			<div class="title">消息中心</div>
+		</div>
+		<div class="message" v-if="message.length>0">
+			<div class="meaasge-box" v-for="item in message" :key="item.TaskID" @click="openDetail(item)">
+				<div class="icon icon-gaowei" v-if="item.TaskType==1">
+				</div>
+				<div class="icon icon-zhaji" v-if="item.TaskType==2">
+				</div>
+				<div class="icon icon-channel" v-if="item.TaskType==3">
+				</div>
+				<div class="info">
+					<p class="title0">
+						<span class="name" v-if="item.TaskType==1">高风险布控任务</span>
+						<span class="name" v-if="item.TaskType==2">普通布控任务</span>
+						<span class="name" v-if="item.TaskType==3">人脸报警任务</span>
+						<span class="time">{{item.CreateTime}}</span>
+					</p>
+					<p class="detail" v-if="item.TaskType==1">{{item.Area}}收到高风险布控消息，任务号为{{item.TaskID}}</p>
+					<p class="detail" v-if="item.TaskType==2">{{item.Area}}收到普通布控消息，任务号为{{item.TaskID}}</p>
+					<p class="detail" v-if="item.TaskType==3">{{item.Area}}收到人脸报警消息，任务号为{{item.TaskID}}</p>
+				</div>
+			</div>
+		</div>
+		<div class="noData" v-else>暂无数据</div>
+	</div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/api_extend.js"></script>
+<script type="text/javascript" src="../../script/vue.min.js"></script>
+<script type="text/javascript" src="../../script/jquery.min.js"></script>
+<script type="text/javascript">
+	var vm;
+
+	function initvm() {
+		vm = new Vue({
+			el: '#app',
+			data: {
+				message: []
+			},
+			mounted: function() {
+				this.message = $api.getAllData("notifyList");
+			},
+			methods: {
+				openDetail: function(item) {
+					$api.setStorage("WinName", "message");
+					if (item.TaskType == 1) {
+						//高危
+						$api.setStorage("frameName", "highRiskDetail");
+						api.openFrame({
+							name: 'highRiskDetail',
+							url: '../order/highRiskDetail.html',
+							animation: {
+								type: "movein", //动画类型（详见动画类型常量）
+								subType: "from_right", //动画子类型（详见动画子类型常量）
+								duration: 300 //动画过渡时间，默认300毫秒
+							},
+							pageParam: {
+								TaskID: item.TaskID,
+								page: "message"
+							}
+						})
+					} else if (item.TaskType == 2) {
+						//普通
+						$api.setStorage("frameName", "ordinaryDetail");
+						api.openFrame({
+							name: 'ordinaryDetail',
+							url: '../order/ordinaryDetail.html',
+							animation: {
+								type: "movein", //动画类型（详见动画类型常量）
+								subType: "from_right", //动画子类型（详见动画子类型常量）
+								duration: 300 //动画过渡时间，默认300毫秒
+							},
+							pageParam: {
+								TaskID: item.TaskID,
+							}
+						})
+					} else {
+						$api.setStorage("frameName", "faceDetail");
+						api.openFrame({
+							name: 'faceDetail',
+							url: '../order/faceDetail.html',
+							animation: {
+								type: "movein", //动画类型（详见动画类型常量）
+								subType: "from_right", //动画子类型（详见动画子类型常量）
+								duration: 300 //动画过渡时间，默认300毫秒
+							},
+							pageParam: {
+								TaskID: item.TaskID,
+								page: "message"
+							}
+						})
+					}
+				},
+			}
+		})
+	}
+
+	function sliding() {
+		// api.openSlidPane({type: 'left'});
+		// api.openDrawerPane({
+		// 	type: 'left'
+		// });
+		api.closeWin()
+	}
+	apiready = function() {
+		//沉浸式
+		$api.fixStatusBar($api.dom('.header'));
+		initvm();
+		//监听消息
+		$api.listener('notifyListChange',
+			function(params) {
+				vm.message = $api.getAllData("notifyList");
+			});
+		// 		api.addEventListener({
+		// 			name: 'keyback'
+		// 		}, function(ret, err) {
+		// 			if ($api.getStorage("WinName") == "message") {
+		// 				api.openDrawerLayout({
+		// 					name: 'message',
+		// 					url: '../message/message.html',
+		// 					animation: {
+		// 						type: "movein", //动画类型（详见动画类型常量）
+		// 						subType: "from_left", //动画子类型（详见动画子类型常量）
+		// 						duration: 300 //动画过渡时间，默认300毫秒
+		// 					},
+		// 					leftPane: {
+		// 						name: 'fixed',
+		// 						url: '../fixed.html',
+		// 						edge: 100
+		// 					}
+		//
+		// 				});
+		// 				$api.setStorage("WinName", "");
+		// 			} else {
+		// 				$api.closeWidget();
+		// 			}
+		// 		});
+	};
+</script>
+
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE HTML>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0, minimum-scale=1.0, user-scalable=0, initial-scale=1.0, width=device-width" />
+		<meta name="format-detection" content="telephone=no, email=no, date=no, address=no">
+		<title>查看图片</title>
+		<link rel="stylesheet" type="text/css" href="../../css/api.css" />
+		<style>
+
+		</style>
+	</head>
+
+	<body>
+		<img src="../../image/back.png" style="width: 30px;height: 30px;" onclick="closet()">
+	</body>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script type="text/javascript" src="../../script/api_extend.js"></script>
+	<script>
+		apiready = function() {}
+
+		function closet() {
+			api.closeFrame({
+				name: 'imageView'
+			})
+			api.closeFrame()
+			var photoBrowser = api.require('photoBrowser');
+			photoBrowser.close();
+		}
+	</script>
+
+</html>

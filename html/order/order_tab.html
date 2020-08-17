@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<title>title</title>
+		<link rel="stylesheet" type="text/css" href="../../css/api.css" />
+		<style>
+			html,
+			body {
+				margin: 0;
+				padding: 0;
+				height: 100%;
+				width: 100%;
+				background: rgba(231, 237, 248, 1);
+			}
+
+			#app {
+				margin: 0;
+				padding: 0;
+				height: 100%;
+				width: 100%;
+			}
+
+			.header {
+				height: 50px;
+				background: linear-gradient(-30deg, rgba(40, 99, 183, 1), rgba(12, 68, 146, 1));
+				position: relative;
+			}
+
+			.title {
+				text-align: center;
+				color: rgba(255, 255, 255, 1);
+				font-size: 20px;
+				position: absolute;
+				left: 50%;
+				top: 50%;
+				transform: translate(-50%, -50%);
+			}
+
+			.header .menu {
+				width: 28px;
+				height: 28px;
+				margin:0 20px;
+				border-radius: 50%;
+			}
+
+			.tab {
+				display: flex;
+				flex-direction: row;
+				flex: 1;
+			}
+
+			.subtab {
+				flex: 1;
+				text-align: center;
+			}
+
+			span {
+				height: 2rem;
+				line-height: 2rem;
+				font-size: 22px;
+				font-family: SourceHanSansCN-Regular;
+				font-weight: 400;
+				color: rgba(51, 51, 51, 1);
+				padding: .2rem 0;
+			}
+
+			.subtab-active {
+				font-weight: 500;
+				color: rgba(51, 128, 237, 1);
+				border-bottom: 2px solid rgba(51, 128, 237, 1);
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="app">
+			<div class="header">
+				<a class="menu" tapmode="" onclick="sliding()">
+					<img src="../../image/renwu/back.png" style="height: 100%;width:100%;" />
+				</a>
+				<div class="title">查验历史</div>
+			</div>
+			<div class="tab">
+				<div class="subtab" onclick="openTab(0)">
+					<span :class="currentIndex==0?'subtab-active':''">全部</span>
+				</div>
+				<div class="subtab" onclick="openTab(1)">
+					<span :class="currentIndex==1?'subtab-active':''">高风险布控</span>
+				</div>
+				<div class="subtab" onclick="openTab(2)">
+					<span :class="currentIndex==2?'subtab-active':''">普通布控</span>
+				</div>
+				<div class="subtab" onclick="openTab(3)">
+					<span :class="currentIndex==3?'subtab-active':''">人脸报警</span>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript" src="../../script/api.js"></script>
+	<script type="text/javascript" src="../../script/api_extend.js"></script>
+	<script type="text/javascript" src="../../script/vue.min.js"></script>
+	<script type="text/javascript" src="../../script/jquery.min.js"></script>
+	<script>
+		var vm;
+
+		function initvm() {
+			vm = new Vue({
+				el: '#app',
+				data: {
+					currentIndex: 0
+				},
+				methods: {
+
+				}
+			})
+		}
+
+		function openTab(index) {
+			api.setFrameGroupIndex({
+				name: 'order_group',
+				scroll: true,
+				index: index
+			});
+
+		}
+
+		function sliding() {
+			// api.openSlidPane({type: 'left'});
+			// api.openDrawerPane({
+			// 	type: 'left'
+			// });
+			api.closeWin()
+		}
+		apiready = function() {
+			//沉浸式
+			$api.fixStatusBar($api.dom('.header'));
+			initvm();
+			api.openFrameGroup({
+				name: 'order_group',
+				rect: {
+					x: 0,
+					y: 125,
+					w: 'auto',
+					h: 'auto'
+				},
+				frames: [{
+					name: 'allOrder',
+					url: './allOrder.html',
+				}, {
+					name: 'highRiskOrder',
+					url: './highRiskOrder.html',
+				}, {
+					name: 'ordinaryOrder',
+					url: './ordinaryOrder.html',
+				}, {
+					name: 'faceOrder',
+					url: './faceOrder.html',
+				}]
+			}, function(ret, err) {
+				var index = ret.index;
+				vm.currentIndex = index;
+			});
+// 			api.addEventListener({
+// 				name: 'keyback'
+// 			}, function(ret, err) {
+// 				var flag=false;
+// 				var frames = JSON.parse(JSON.stringify(api.frames()));
+// 				var currentFrame = $api.getStorage("frameName");
+// 				var windows = JSON.parse(JSON.stringify(api.windows()));
+// 				for(var i = 0; i < frames.length; i++) {
+// 					if(currentFrame == frames[i].name) {
+// 						flag=true;
+// 						api.closeFrame({
+// 							name: currentFrame
+// 						})
+// 					}
+// 				}
+// 				if(!flag){
+// 					// $api.send('logOut');
+// 					$api.closeWidget();
+// 				}
+//
+// 			});
+		};
+	</script>
+
+</html>

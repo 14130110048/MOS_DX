@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+	<title>登录页</title>
+	<link rel="stylesheet" type="text/css" href="../../css/api.css" />
+	<style>
+		html,
+		body {
+			font-size: 16px !important;
+			width: 534px;
+			height: 816px;
+			overflow: scroll;
+		}
+
+		#app {
+			width: 534px;
+			height: 816px;
+		}
+
+		.login-box {
+			background: url(../../image/login/bg1.png) left top no-repeat;
+			background-size: 100% 100%;
+			width: 100%;
+			height: 100%;
+			display: flex;
+			flex-direction: column;
+		}
+
+		.logo {
+			background: url(../../image/login/logo1.png) center no-repeat;
+			background-size: contain;
+			margin: 10% auto;
+			width: 100%;
+			height: 50%;
+			/*border: 1px solid red*/
+		}
+
+		.form {
+			display: flex;
+			flex-direction: column;
+			color: rgba(255, 255, 255, 1);
+			margin-top: 2rem;
+		}
+
+		.username,
+		.password {
+			/*width: 20rem;*/
+			width: 80%;
+			margin-left: 10%;
+			margin-top: 30px;
+			position: relative;
+		}
+
+		input {
+			border-bottom: 1px solid rgba(255, 255, 255, 1);
+			width: 100%;
+			height: 50px;
+			text-indent: 60px;
+			color: rgba(255, 255, 255, 1);
+			outline: none;
+		}
+
+		span {
+			/*display: block;*/
+			width: 25px;
+			height: 25px;
+			top: 13px;
+			left: 15px;
+			position: absolute;
+		}
+
+		.icon-user {
+			background: url(../../image/login/user.png) center no-repeat;
+			background-size: contain;
+		}
+
+		.icon-password {
+			background: url(../../image/login/password.png) center no-repeat;
+			background-size: contain;
+		}
+
+		.login {
+			width: 94%;
+			height: 55px;
+			margin-left: 3%;
+			margin-top: 30px;
+			text-align: center;
+			background: rgba(51, 128, 237, 1);
+			border-radius: 18px;
+			color: rgba(255, 255, 255, 1);
+			border-radius: 10px;
+			outline: none;
+			font-size: 24px;
+			/*letter-spacing: 10px;*/
+		}
+
+		.logo-bottom {
+			margin-top: 25px;
+			bottom: 10px;
+			width: 100%;
+			height: 40px;
+			text-align: center;
+			color: #fff;
+			/*background: url(../../image/login-bg.png) center no-repeat;
+			background-size: contain;*/
+		}
+
+		.loading {
+			width: 40px;
+			height: 40px;
+			background: url(../../image/loading_more.gif) center no-repeat;
+			background-size: contain;
+		}
+
+		.init {
+			width: 84%;
+			height: 270px;
+			margin-top: 2rem;
+			margin-left: 8%;
+			background: url(../../image/init1.png) center no-repeat;
+			background-size: 100% 100%;
+		}
+
+		[v-cloak] {
+			display: none !important;
+		}
+	</style>
+</head>
+
+<body>
+	<div id="app" v-cloak>
+		<div class="login-box">
+
+			<div class="logo">
+
+			</div>
+			<div class="form" v-if="initCofig">
+				<div class="username">
+					<span class="icon-user"></span>
+					<input type="text" id="user" placeholder="用户名" />
+				</div>
+				<div class="password">
+					<span class="icon-password"></span>
+					<input type="password" id="password" placeholder="密码" />
+				</div>
+				<button class="login" onclick="login()">
+					<a v-if="!loading">登录</a>
+					<a class="loading" v-if="loading"></a>
+				</button>
+			</div>
+			<div class="init" v-else>
+			</div>
+			<div class="logo-bottom">
+				Copyright © 2019 同方威视技术股份有限公司
+			</div>
+		</div>
+	</div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/api_extend.js"></script>
+<script type="text/javascript" src="../../script/vue.min.js"></script>
+<script type="text/javascript" src="../../script/jquery.min.js"></script>
+<script>
+	var vm;
+
+	function initvm() {
+		vm = new Vue({
+			el: '#app',
+			data: {
+				loading: false,
+				logo: true,
+				initCofig: false
+			},
+			methods: {
+
+			}
+		})
+	}
+
+	function openLayOut() {
+		api.openWin({
+			name: 'selectArea',
+			url: '../selectArea/selectArea.html',
+			pageParam: {
+				name: 'test'
+			}
+		});
+
+	}
+	//	window.onscroll = function() {
+	//		console.warn($(window).scrollTop())
+	//	}
+	apiready = function() {
+		initvm();
+		GetInitConfig();
+		// var demo = api.require('floatButton');
+		// demo.closeButton(function(ret, err) {});
+		api.addEventListener({
+			name: 'keyback'
+		}, function(ret, err) {
+			$api.closeWidget();
+			// closeWidget();
+		});
+		var keyBoardMgr = api.require("keyBoardMgr");
+		keyBoardMgr.addKBListener(function(ret, err) {});
+	};
+
+	function onKeyBoardChanged(isShow, height) {
+		if (isShow == 1) {
+			vm.logo = false;
+			setTimeout(function() {
+
+				var t = document.body.clientHeight;
+				window.scroll({
+					top: 292,
+					left: 0,
+					behavior: 'smooth'
+				});
+			}, 100)
+		} else if (isShow == 0) {
+			// vm.logo = true;
+			vm.logo = true;
+		}
+	}
+	//网络检查,获取初始化参数
+	function GetInitConfig() {
+		api.showProgress();
+		$api.ajax({
+			url: rootURL_access + '/Api/Config/GetInitConfig',
+			method: "get",
+			values: {
+				AppID: 'MWS'
+			}
+		}, function(ret, err) {
+			console.warn(JSON.stringify(ret));
+			console.warn(JSON.stringify(err));
+			api.hideProgress()
+			if (ret) {
+				if (ret.success && ret.data) {
+					// 认证成功
+					vm.initCofig = true;
+					var ManageServiceAddress = ret.data.ServiceAddress.ManageServiceAddress;
+					var PushServiceAddress = ret.data.ServiceAddress.PushServiceAddress;
+					var RunParam = ret.data.RunParam;
+					$api.setStorage('PushServiceAddress', PushServiceAddress);
+					$api.setStorage('RunParam', RunParam);
+				} else {
+					api.confirm({
+						title: '提示',
+						msg: '接入服务器失败',
+						buttons: ['重试', '取消']
+					}, function(ret, err) {
+						if (ret) {
+							if (ret.buttonIndex == 2) {
+								api.closeWidget({
+										silent: true
+								});
+							} else {
+									GetInitConfig();
+							}
+						}
+					});
+				}
+			} else {
+				api.confirm({
+					title: '提示',
+					msg: '接入服务器失败',
+					buttons: ['重试', '取消']
+				}, function(ret, err) {
+					if (ret) {
+						if (ret.buttonIndex == 2) {
+							api.closeWidget({
+									silent: true
+							});
+						} else {
+								GetInitConfig();
+						}
+					}
+				});
+			}
+		})
+	}
+
+	function login() {
+		var UserID = document.getElementById("user").value;
+		var Password = document.getElementById("password").value;
+
+		if (!UserID) {
+			alert('请输入账号')
+			return;
+		}
+		if (!Password) {
+			alert('请输入密码');
+			return;
+		}
+		//需要正则验证
+		// api.showProgress()
+		var params = {
+			appid: "APPID_DXM",
+			userid: document.getElementById("user").value,
+			pwd: document.getElementById("password").value,
+			clientID: api.deviceId,
+			h4aFormType: "forms",
+			userType: 0
+				// UserID: document.getElementById("user").value,
+				// Password: document.getElementById("password").value,
+		}
+
+		//			$api.send('login', params)
+		vm.loading = true;
+		$api.ajax({
+			url: rootURL_access + '/Api/Login/Login',
+			method: "post",
+			values: params
+		}, function(ret, err) {
+			//登录成功之后再去做存储因为有可能会失败
+			if (ret.data && ret.data.ResultCode && ret.data.ResultCode == 1) {
+				api.hideProgress()
+					//认证成功
+				var Token = ret.data.Token;
+				var UserInfo = ret.data.UserInfo;
+				//存储有效信息
+				$api.setStorage('userInfoData', UserInfo);
+				$api.setStorage('token', Token);
+				$api.send('loginSuccess');
+				// setTimeout(function() {
+				vm.loading = false;
+				// api.closeWin();
+				// }, 1000)
+
+			} else if (ret.data && ret.data.ResultCode && ret.data.ResultCode == 0) {
+				api.hideProgress()
+				alert('用户名或密码错误')
+			} else if (ret.data && ret.data.ResultCode && ret.data.ResultCode == 2) {
+				api.hideProgress()
+				api.confirm({
+					title: '提示',
+					msg: '有其他设备正在登录您的账号，是否需要继续登录',
+					buttons: ['确定', '取消']
+				}, function(ret, err) {
+					var index = ret.buttonIndex;
+					if (index == 1) {
+						relogin();
+					} else {
+
+					}
+				});
+			} else {
+				$api.toast(ret.msg);
+				vm.loading = false;
+			}
+			if (err) {
+				$api.toast(err.msg);
+				vm.loading = false;
+			}
+		})
+	}
+</script>
+
+</html>

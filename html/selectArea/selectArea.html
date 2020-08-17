@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+	<title>选择工作区域</title>
+	<link rel="stylesheet" type="text/css" href="../../css/api.css" />
+	<style>
+		html,
+		body {
+			font-size: 16px !important;
+			width: 100%;
+			height: 100%;
+			margin: 0;
+			padding: 0;
+		}
+
+		#app {
+			width: 100%;
+			height: 100%;
+			background: url(../../image/bg.png) top left no-repeat;
+			background-size: 100% 100%;
+			display: flex;
+			flex-direction: column;
+			color: #FFFFFF;
+			overflow: hidden;
+		}
+
+		.item {
+			align-items: center;
+			margin: 20px 0 10px;
+		}
+
+		.title {
+			font-size: 22px;
+			text-align: center;
+		}
+
+		.p-title {
+			line-height: 2.5rem;
+			width: 11rem;
+			height: 2.5rem;
+			background: rgba(51, 129, 239, 1);
+			border-radius: 0px 48px 48px 0px;
+		}
+
+		.i-ZP {
+			width: 3rem;
+			height: 1.4rem;
+			line-height: 1.4rem;
+			text-align: center;
+			display: block;
+			background: rgba(56, 73, 97, 0.9);
+			border: 1px solid rgba(163, 125, 77, 1);
+			border-radius: 1.5rem;
+			font-style: normal;
+			font-size: 14px;
+			color: rgba(163, 125, 77, 1);
+			margin-top: 1.5rem;
+			margin-left: 1rem;
+		}
+
+		.i-ZP-light {
+			width: 3rem;
+			height: 1.4rem;
+			line-height: 1.4rem;
+			text-align: center;
+			display: block;
+			border-radius: 1.5rem;
+			font-style: normal;
+			font-size: 14px;
+			color: #FFFFFF;
+			background: rgba(251, 158, 37, 0.9);
+			border: 2px solid rgba(255, 255, 255, 1);
+			margin-top: 1.5rem;
+			margin-left: 1rem;
+		}
+
+		.i-ZJ {
+			width: 3rem;
+			height: 1.4rem;
+			line-height: 1.4rem;
+			text-align: center;
+			display: block;
+			background: rgba(56, 73, 97, 0.9);
+			border: 1px solid rgba(163, 125, 77, 1);
+			border-radius: 1.5rem;
+			font-style: normal;
+			font-size: 14px;
+			color: rgba(163, 125, 77, 1);
+			margin-top: 1rem;
+			margin-left: .1rem;
+		}
+
+		.i-ZJ-light {
+			width: 3rem;
+			height: 1.4rem;
+			line-height: 1.4rem;
+			text-align: center;
+			display: block;
+			border-radius: 1.5rem;
+			font-style: normal;
+			font-size: 14px;
+			color: #FFFFFF;
+			background: rgba(251, 158, 37, 0.9);
+			border: 2px solid rgba(255, 255, 255, 1);
+			margin-top: 1rem;
+			margin-left: .1rem;
+		}
+
+		.icon-zhuanpan {
+			background: url(../../image/icon-zhuanpan.png) no-repeat;
+			background-size: 100% 100%;
+		}
+
+		.icon-zhaji {
+			background: url(../../image/icon-zhaji.png) no-repeat;
+			background-size: 100% 100%;
+		}
+
+		.icon {
+			float: left;
+			border: none;
+			width: 2rem;
+			height: 2rem;
+			line-height: 2rem;
+			margin: .25rem 1rem .25rem 1rem;
+		}
+
+		.icon-title {
+			line-height: 2.5rem;
+			width: 7rem;
+			height: 25rem;
+			font-size: 1rem;
+		}
+
+		.zhuanpan {
+			padding: 0 4rem 0;
+		}
+
+		.zhaji {
+			padding: 0 1rem 0;
+		}
+
+		.span-zhuanpan {
+			margin-top: 1rem;
+			display: inline-block;
+			width: 5rem;
+			height: 4.5rem;
+			line-height: 2rem;
+			text-align: center;
+			border-radius: 5px;
+			background: url(../../image/zhuanpan.png) no-repeat;
+			background-size: 100% 100%;
+			text-align: right;
+			margin-left: 1rem;
+		}
+
+		.span-zhuanpan-light {
+			margin-top: 1rem;
+			display: inline-block;
+			width: 5rem;
+			height: 4.5rem;
+			line-height: 2rem;
+			text-align: center;
+			border-radius: 5px;
+			background: url(../../image/zhuanpan-light.png) no-repeat;
+			background-size: 100% 100%;
+			text-align: right;
+			margin-left: 1rem;
+		}
+
+		.span-zhaji {
+			margin-top: 1.5rem;
+			display: inline-block;
+			width: 3.3rem;
+			height: 3.3rem;
+			text-align: center;
+			border-radius: 5px;
+			background: url(../../image/ZJ.png) center no-repeat;
+			background-size: contain;
+			margin-right: .5rem;
+		}
+
+		.span-zhaji-light {
+			margin-top: 1.5rem;
+			display: inline-block;
+			width: 3.3rem;
+			height: 3.3rem;
+			text-align: center;
+			border-radius: 5px;
+			background: url(../../image/ZJ-light.png) center no-repeat;
+			background-size: contain;
+			margin-right: .5rem;
+		}
+
+		.btn {
+			flex: 1;
+			text-align: center;
+		}
+
+		.bottom {
+			/*position: absolute;*/
+			width: 100%;
+			height: 12rem;
+			bottom: 0;
+			background: url(../../image/selectArea-bottom.png) no-repeat;
+			background-size: 100% 100%;
+			display: flex;
+			flex-direction: column;
+		}
+
+		.clear {
+			margin: 1.5rem 2rem 1.5rem 0;
+			text-align: right;
+			border: none;
+		}
+
+		.btn-clear {
+			/*margin-right: 2rem;*/
+			width: 6rem;
+			height: 2rem;
+			background: rgba(255, 255, 255, 0);
+			border: 2px solid rgba(51, 129, 239, 1);
+			border-radius: 36px;
+			color: rgba(51, 129, 239, 1);
+			outline: none;
+		}
+
+		.btn-clear:active,
+		.btn-clear:focus {
+			outline: none;
+		}
+
+		.select {
+			height: 4rem;
+			font-size: 18px;
+			display: flex;
+			flex-direction: row;
+		}
+
+		.icon-dingwei {
+			margin: 0 1rem 0;
+			width: 2rem;
+			height: 2rem;
+			background: url(../../image/dingwei.png) no-repeat;
+			background-size: 100% 100%;
+		}
+
+		.select-area {
+			flex: 1;
+			overflow: hidden;
+			display: flex;
+			flex-direction: column;
+		}
+
+		.span-dingwei {
+			display: inline-block;
+			width: 5.5rem;
+			color: rgba(102, 102, 102, 1);
+		}
+
+		.selectArea {
+			flex: 1;
+			color: rgba(251, 158, 37, 1);
+			text-overflow: ellipsis;
+			overflow: hidden;
+			white-space: nowrap;
+		}
+
+		.confirm {
+			margin-top: 1.5rem;
+			text-align: center;
+			border: none;
+		}
+
+		.area-display {
+			display: flex;
+			flex-direction: row;
+			height: 1.5rem;
+			line-height: 1.5rem;
+		}
+
+		p {
+			overflow: hidden;
+		}
+
+		.btn-confirm {
+			width: 90%;
+			height: 2.5rem;
+			color: #FFFFFF;
+			background: rgba(51, 128, 237, 1);
+			border: 2px solid rgba(51, 129, 239, 1);
+			border-radius: 18px;
+			outline: none;
+		}
+
+		[v-cloak] {
+			display: none !important;
+		}
+
+		.header {
+			height: 60px;
+			background: linear-gradient(-30deg, rgba(40, 99, 183, 1), rgba(12, 68, 146, 1));
+		}
+
+		.title {
+			text-align: center;
+			color: rgba(255, 255, 255, 1);
+			font-size: 20px;
+			position: absolute;
+			left: 50%;
+			top: 2%;
+			transform: translate(-50%, 0);
+		}
+
+		.header .menu {
+			width: 28px;
+			height: 28px;
+			margin: 0 20px;
+			margin-top: 20px;
+		}
+
+		.box {
+			flex: 1;
+			overflow: auto;
+		}
+	</style>
+</head>
+
+<body>
+	<div id="app" v-cloak>
+		<!--<div class="item title">
+				选择工作区域
+			</div>-->
+		<div class="header">
+			<a class="menu" tapmode="" onclick="sliding()" v-if="myArea!=0">
+				<img src="../../image/renwu/back.png" style="height: 100%;width: 100%;" />
+			</a>
+			<div class="title">选择工作区域</div>
+		</div>
+		<div class="box">
+			<div class="item">
+				<p class="p-title"><span class="icon icon-zhuanpan"></span>
+					<span class="icon-title">行李转盘</span></p>
+				<div class="zhuanpan">
+					<span v-for="(item,index) in zhuanpan" @click="selectedZP(item)" :class="selectZP.indexOf(item)>-1?'span-zhuanpan-light':'span-zhuanpan'">
+						<i :class="selectZP.indexOf(item)>-1?'i-ZP-light':'i-ZP'">{{item.AreaName}}</i>
+					</span>
+				</div>
+			</div>
+			<div class="item">
+				<p class="p-title"><span class="icon icon-zhaji"></span>
+					<span class="icon-title">智能通道</span></p>
+				<div class="zhaji">
+					<span v-for="(item,index) in zhaji" @click="selectedZJ(item)" :class="selectZJ.indexOf(item)>-1?'span-zhaji-light':'span-zhaji'">
+						<i :class="selectZJ.indexOf(item)>-1?'i-ZJ-light':'i-ZJ'">{{item.AreaName}}</i>
+					</span>
+				</div>
+			</div>
+		</div>
+		<div class="bottom">
+			<div class="clear">
+				<button class="btn-clear" onclick="clearSelected()">清除</button>
+			</div>
+			<div class="select">
+				<div class="icon-dingwei">
+
+				</div>
+				<div class="select-area">
+					<div class="area-display">
+						<span class="span-dingwei">行李转盘:</span>
+						<span class="selectArea">
+								<span  v-for="item in selectZP">{{item.AreaName}};</span>
+						</span>
+					</div>
+					<div class="area-display">
+						<span class="span-dingwei">智能通道:</span>
+						<span class="selectArea"><span  v-for="item in selectZJ">{{item.AreaName}};</span></span>
+					</div>
+				</div>
+			</div>
+			<div class="confirm">
+				<button class="btn-confirm" onclick="confirm()">确认</button>
+			</div>
+		</div>
+	</div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/api_extend.js"></script>
+<script type="text/javascript" src="../../script/vue.min.js"></script>
+<script type="text/javascript" src="../../script/jquery.min.js"></script>
+<script type="text/javascript">
+	var vm;
+
+	function initVm() {
+		vm = new Vue({
+			el: '#app',
+			data: {
+				zhuanpan: [],
+				zhaji: [],
+				selectZJ: [],
+				selectZP: [],
+				myArea: ""
+			},
+			mounted() {
+				this.myArea = api.pageParam.type;
+			},
+			methods: {
+
+			}
+		})
+	}
+
+	function selectedZJ(item) {
+		var index = vm.selectZJ.indexOf(item);
+		if (index > -1) {
+			vm.selectZJ.splice(index, 1)
+		} else {
+			vm.selectZJ.push(item);
+		}
+	};
+
+	function selectedZP(item) {
+		var index = vm.selectZP.indexOf(item);
+		if (index > -1) {
+			vm.selectZP.splice(index, 1)
+		} else {
+			vm.selectZP.push(item);
+		}
+	};
+
+	function clearSelected() {
+		//清楚所选区域
+		vm.selectZP = [];
+		vm.selectZJ = [];
+	};
+
+	function sliding() {
+		// api.openSlidPane({type: 'left'});
+		// api.openDrawerPane({
+		// 	type: 'left'
+		// });
+		api.closeWin()
+	}
+	apiready = function() {
+		initVm();
+		getAllArea();
+		// var demo = api.require('floatButton');
+		// demo.closeButton(function(ret, err) {});
+	};
+
+	function openDrawerLayout() {
+		if (vm.myArea == 0) {
+			api.openDrawerLayout({
+				name: 'slide',
+				url: '../slide.html',
+				animation: {
+					type: 'none'
+				},
+				leftPane: {
+					name: 'fixed',
+					url: '../fixed.html',
+					edge: 100
+				}
+			});
+		}
+		setTimeout(function() {
+			api.closeWin({
+				name: 'selectArea'
+			})
+		}, 500);
+	};
+	//点击确定
+	function confirm() {
+		if (vm.selectZJ.length <= 0 && vm.selectZP.length <= 0) {
+			$api.toast('请选择工作区域');
+		} else {
+			bindArea();
+		}
+	}
+	//获取所有区域信息
+	function getAllArea() {
+		$api.ajax({
+			url: rootURL_web + '/api/DaXing_Mobile/GetAllArea',
+			method: "get",
+			dataType: "json",
+		}, function(ret, err) {
+			console.warn(JSON.stringify(ret));
+			console.warn(JSON.stringify(err));
+			if (ret.success) {
+				var allArea = ret.data;
+				for (var i = 0; i < allArea.length; i++) {
+					if (allArea[i].Type == 1) {
+						vm.zhuanpan = allArea[i].AreaData;
+					} else {
+						vm.zhaji = allArea[i].AreaData;
+					}
+				}
+				getMyArea();
+			}
+		})
+	}
+	//获取我的区域
+	function getMyArea() {
+		var param = {
+			UserID: $api.getStorage("userInfoData").UserID
+		};
+		$api.ajax({
+			url: rootURL_web + '/api/DaXing_Mobile/GetMyArea',
+			method: "get",
+			values: param,
+		}, function(ret, err) {
+			console.warn(JSON.stringify(ret));
+			console.warn(JSON.stringify(err));
+			if (ret.success) {
+				if (ret.data.length > 0) {
+					var area = [];
+					for (var ii = 0; ii < ret.data.length; ii++) {
+						area.push(ret.data[ii].AreaCode)
+					}
+					for (var i = 0; i < area.length; i++) {
+						for (var j = 0; j < vm.zhuanpan.length; j++) {
+							if (vm.zhuanpan[j].AreaCode == area[i]) {
+								vm.selectZP.push(vm.zhuanpan[j])
+							}
+						}
+						for (var k = 0; k < vm.zhaji.length; k++) {
+							if (vm.zhaji[k].AreaCode == area[i]) {
+								vm.selectZJ.push(vm.zhaji[k])
+							}
+						}
+					}
+				} else {
+					vm.selectZJ = [];
+					vm.selectZP = [];
+				}
+			}
+
+		})
+	}
+	//绑定区域
+	function bindArea() {
+		api.showProgress();
+		var areaCode = [];
+		for (var i = 0; i < vm.selectZP.length; i++) {
+			areaCode.push(vm.selectZP[i].AreaCode)
+		}
+		for (var j = 0; j < vm.selectZJ.length; j++) {
+			areaCode.push(vm.selectZJ[j].AreaCode)
+
+		}
+		var param = {
+			UserId: $api.getStorage("userInfoData").UserID,
+			AreaCode: areaCode
+		};
+		//			console.warn(JSON.stringify(param))
+		$api.ajax({
+			url: rootURL_web + '/api/DaXing_Mobile/BindArea',
+			method: "post",
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: param,
+		}, function(ret, err) {
+			api.hideProgress();
+			console.warn(JSON.stringify(ret));
+			console.warn(JSON.stringify(err));
+			if (ret.success) {
+				$api.toast('保存成功');
+				openDrawerLayout();
+			} else {
+				$api.toast('保存失败');
+			}
+		})
+	}
+</script>
+
+</html>

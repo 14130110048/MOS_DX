@@ -1,0 +1,152 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>slidPane</title>
+		<link rel="stylesheet" type="text/css" href="../css/api.css" />
+		<style>
+			html,
+			body {
+				margin: 0;
+				padding: 0;
+				height: 100%;
+				width: 100%;
+				background: rgba(231, 237, 248, 1);
+			}
+
+			#app {
+				margin: 0;
+				padding: 0;
+				height: 100%;
+				width: 100%;
+				position: relative;
+			}
+
+			.header {
+				height: 60px;
+				background: linear-gradient(-30deg, rgba(40, 99, 183, 1), rgba(12, 68, 146, 1));
+			}
+
+			.title {
+				text-align: center;
+				color: rgba(255, 255, 255, 1);
+				font-size: 20px;
+				position: absolute;
+				left: 50%;
+				top: 2%;
+				transform: translate(-50%, 0);
+			}
+
+			.header .menu {
+				width: 45px;
+				height: 45px;
+				margin: -15px 10px 0;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="app">
+			<div class="header">
+				<a class="menu" tapmode="" onclick="sliding()">
+					<img src="../image/head.png" style="height: 100%;width: 100%;" />
+				</a>
+				<div class="title" onclick="">任务</div>
+			</div>
+		</div>
+		<script type="text/javascript" src="../script/api.js"></script>
+		<script type="text/javascript" src="../script/api_extend.js"></script>
+		<script type="text/javascript" src="../script/vue.min.js"></script>
+		<script type="text/javascript" src="../script/jquery.min.js"></script>
+		<script>
+			function sliding() {
+				api.openDrawerPane({
+					type: 'left'
+				});
+			}
+			apiready = function() {
+				//沉浸式
+				$api.fixStatusBar($api.dom('.header'));
+				//注释掉拍照功能
+				// var demo = api.require('floatButton');
+				// demo.openButton({
+				// 	rect: {
+				// 		x: 480,
+				// 		y: 500,
+				// 		w: 60,
+				// 		h: 60
+				// 	},
+				// 	btnPic: '../image/creamer.png'
+				// }, function(ret) {});
+				// demo.setOnClickListener(function(ret) {
+				// 	api.getPicture({
+				// 		sourceType: 'camera',
+				// 		encodingType: 'jpg',
+				// 		mediaValue: 'pic',
+				// 		destinationType: 'url',
+				// 		allowEdit: true,
+				// 		saveToPhotoAlbum: true
+				// 	}, function(ret, err) {
+				// 		if(ret) {} else {
+				// 			alert(JSON.stringify(err));
+				// 		}
+				// 	});
+				// });
+				api.openFrame({
+					name: 'task_tab',
+					url: './task/task_tab.html',
+					rect: {
+						x: 0,
+						y: 55,
+						w: 'auto',
+						h: 80,
+					},
+				});
+				api.addEventListener({
+					name: 'keyback'
+				}, function(ret, err) {
+					var flag=false;
+					var frames = JSON.parse(JSON.stringify(api.frames()));
+					var currentFrame = $api.getStorage("frameName");
+					var windows = JSON.parse(JSON.stringify(api.windows()));
+					// console.log(JSON.stringify(api.windows()))
+					for(var i = 0; i < frames.length; i++) {
+						if(currentFrame == frames[i].name) {
+							flag=true;
+							api.closeFrame({
+								name: currentFrame
+							})
+						}
+					}
+					if(!flag) {
+						$api.closeWidget();
+					}
+				});
+			};
+			function chonglian(){
+				api.closeFrame({name:'task_tab'});
+				api.closeFrameGroup({
+				    name: 'alarm_group'
+				});
+			}
+			
+			function dakai(){
+			api.openFrame({
+				name: 'task_tab',
+				url: './task/task_tab.html',
+				rect: {
+					x: 0,
+					y: 55,
+					w: 'auto',
+					h: 80,
+				},
+			});
+				
+			}
+		</script>
+	</body>
+
+</html>

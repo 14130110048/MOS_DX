@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+	<title>行李转盘</title>
+	<link rel="stylesheet" type="text/css" href="../css/api.css" />
+	<style>
+		html,
+		body {
+			font-size: 16px !important;
+			width: 100%;
+			height: 100%;
+			margin: 0;
+			padding: 0;
+		}
+
+		#app {
+			width: 100%;
+			height: 100%;
+			margin: 0;
+			padding: 0;
+			font-family: SourceHanSansCN-Regular;
+			font-weight: 400;
+			color: rgba(51, 51, 51, 1);
+		}
+
+		.task-con {
+			padding: .6rem;
+			display: flex;
+			flex-direction: column;
+		}
+
+		.task {
+			height: 11rem;
+			background: rgba(255, 255, 255, 1);
+			border-radius: 20px;
+			padding: 1rem;
+			margin-bottom: 1rem;
+		}
+
+		.number {
+			height: 1.5rem;
+			line-height: 1.5rem;
+			font-size: 16px;
+		}
+
+		.info {
+			display: flex;
+			flex-direction: row;
+			padding: .5rem .5rem .5rem;
+		}
+
+		.img {
+			width: 50%;
+			height: 9rem;
+			border: 1px solid rgba(231, 237, 248, 1);
+			display: flex;
+			flex-direction: column;
+			overflow: hidden;
+		}
+
+		.detail {
+			padding-left: 1.8rem;
+			padding-top: 0.5rem;
+		}
+
+		li {
+			display: flex;
+			flex-direction: row;
+			padding-top: 1rem;
+			height: 1.5rem;
+			line-height: 1.5rem;
+		}
+
+		.icon {
+			display: inline-block;
+			width: 1.5rem;
+			height: 1.5rem;
+			background: rgba(188, 211, 240, 1);
+			border-radius: 50%;
+		}
+
+		.icon-dingwei {
+			background: url(../../image/renwu/dingwei.png) center no-repeat;
+			background-size: contain;
+		}
+
+		.icon-zhishen {
+			background: url(../../image/renwu/zhishen.png) center no-repeat;
+			background-size: contain;
+		}
+
+		.icon-rengong {
+			background: url(../../image/renwu/rengong.png) center no-repeat;
+			background-size: contain;
+		}
+
+		.icon-renwu {
+			background: url(../../image/renwu/renwu.png) center no-repeat;
+			background-size: contain;
+		}
+
+		.icon-shijian {
+			background: url(../../image/renwu/shijian-blue.png) center no-repeat;
+			background-size: contain;
+		}
+
+		.title {
+			margin-left: .6rem;
+			height: 1.5rem;
+			line-height: 1.5rem;
+		}
+
+		.jielun {
+			margin-left: .6rem;
+			height: 1.5rem;
+			line-height: 1.5rem;
+			border-radius: 10px;
+			min-width: 3rem;
+			text-align: center;
+			padding: .1rem .5rem;
+			font-size: 14px;
+		}
+
+		.jielun-safe {
+			background: rgba(48, 164, 33, 0.1);
+			color: rgba(48, 164, 33, 1);
+		}
+
+		.jielun-xianyi {
+			background: rgba(255, 132, 0, 0.1);
+			color: rgba(255, 132, 0, 1);
+		}
+
+		.jielun-gaowei {
+			background: rgba(230, 76, 76, 0.1);
+			color: rgba(230, 76, 76, 1);
+		}
+
+		.jielun-weizhi {
+			background: rgba(255, 239, 220, 0.1);
+			color: rgba(255, 239, 220, 1);
+		}
+
+		.number {
+			display: flex;
+			flex-direction: row;
+		}
+
+		.bianhao {
+			display: flex;
+			flex-direction: row;
+		}
+
+		.bianhao-title {
+			margin-left: .6rem;
+			height: 1.5rem;
+			line-height: 1.5rem;
+			font-weight: 500;
+		}
+
+		.shijian {
+			display: flex;
+			flex-direction: row;
+			justify-content: flex-end;
+			flex: 1;
+		}
+
+		.time {
+			margin-left: .4rem;
+			height: 1.5rem;
+			line-height: 1.5rem;
+			font-weight: 500;
+			color: rgba(51, 128, 237, 1);
+		}
+
+		img {
+			width: auto;
+			height: 100%;
+			align-self: center;
+		}
+
+		.task-light {
+			animation: 1s rainbow 5;
+		}
+
+		@keyframes rainbow {
+			0% {
+				box-shadow: 0 0 6px red;
+			}
+			100% {
+				box-shadow: none;
+			}
+		}
+
+		[v-cloak] {
+			display: none !important;
+		}
+	</style>
+</head>
+
+<body>
+	<div id="app" v-cloak>
+		<div class="task-con">
+			<div class="task" v-for="item in task" :key="item.TaskID" @click="openDetail(item)" :class="taskArriveId==item.TaskID?'task-light':''">
+				<div class="number">
+					<div class="bianhao">
+						<span class="icon icon-renwu"></span>
+						<span class="bianhao-title">任务编号：{{item.TaskID}}</span>
+					</div>
+					<div class="shijian">
+						<span class="icon icon-shijian"></span>
+						<span class="time" v-if="item.timer>0">{{item.timer}}s</span>
+						<span class="time" v-else-if="item.timer==0">即将到达</span>
+						<span class="time" v-else-if="item.timer<0">已到达</span>
+						<span class="time" v-else>未知</span>
+					</div>
+				</div>
+				<div class="info">
+					<div class="img">
+						<img :src="item.ImageURL" @click="imageView(item.ImageURL,event)"/>
+					</div>
+					<div class="detail">
+						<li>
+							<span class="icon icon-dingwei"></span>
+							<span class="jielun jielun-xianyi">{{item.TurnName}}</span>
+						</li>
+						<li>
+							<span class="icon icon-zhishen"></span>
+							<!-- <span class="title">智审结论</span> -->
+							<span class="jielun jielun-safe" v-if="item.AutoConclusion==0">安全</span>
+							<span class="jielun jielun-xianyi" v-else-if="item.AutoConclusion==1">嫌疑</span>
+							<span class="jielun jielun-gaowei" v-else-if="item.AutoConclusion==4">高风险布控</span>
+						</li>
+						<li>
+							<span class="icon icon-rengong"></span>
+							<!-- <span class="title">人工结论</span> -->
+							<!--<span class="jielun">{{item.JudgeConclusion}}</span>-->
+							<span class="jielun jielun-safe" v-if="item.JudgeConclusion==0">安全</span>
+							<span class="jielun jielun-xianyi" v-else-if="item.JudgeConclusion==1">普通布控</span>
+							<span class="jielun jielun-gaowei" v-else-if="item.JudgeConclusion==4">高风险布控</span>
+						</li>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/api_extend.js"></script>
+<script type="text/javascript" src="../../script/vue.min.js"></script>
+<script type="text/javascript" src="../../script/jquery.min.js"></script>
+<script>
+	var vm;
+
+	function initvm() {
+		vm = new Vue({
+			el: '#app',
+			data: {
+				task: [],
+				taskArriveId: ""
+			},
+			mounted: function() {
+				this.task = $api.getAllData("TurnTask");
+				this.taskArriveId = $api.getAllData("notifyBaggage").TaskID ? $api.getAllData("notifyBaggage").TaskID : "";
+				//仅震动
+				if (this.taskArriveId) {
+					api.notification({
+						vibrate: [200, 800, 200, 800, 200, 800]
+					});
+				}
+			},
+			methods: {
+				openDetail: function(item) {
+					api.openWin({
+						name: 'detailTop',
+						url: './detailTop.html',
+						animation: {
+							type: "movein", //动画类型（详见动画类型常量）
+							subType: "from_right", //动画子类型（详见动画子类型常量）
+							duration: 300 //动画过渡时间，默认300毫秒
+						},
+						pageParam: {
+							TaskID: item.TaskID,
+							taskType: item.taskType
+						}
+					})
+				},
+				imageView: function(image_, event_) {
+					var url_ = "../imageView/imageViewFrame.html"
+					$api.imageView(image_, 0, event_, url_);
+				},
+			}
+		})
+	};
+
+	apiready = function() {
+		initvm();
+		//监听消息
+		$api.listener('reconnecting', function() {
+			api.showProgress({
+				style: 'default',
+				animationType: 'fade',
+				title: '网络缓慢',
+				text: '正在重连...',
+				modal: false
+			});
+		});
+		$api.listener('signalRStart', function() {
+			api.showProgress({
+				style: 'default',
+				animationType: 'fade',
+				title: '请稍等',
+				text: '正在连接服务器...',
+				modal: false
+			});
+		});
+		$api.listener('reconnected', function() {
+			api.hideProgress()
+		});
+		$api.listener('TurnTaskChange',
+			function() {
+				// api.hideProgress();
+				vm.task = $api.getAllData("TurnTask");
+				// api.hideProgress()
+			});
+		$api.listener('notifyBaggageChange',
+			function() {
+				vm.taskArriveId = $api.getAllData("notifyBaggage").TaskID ? $api.getAllData("notifyBaggage").TaskID : "";
+				//仅震动
+				if (vm.taskArriveId) {
+					api.notification({
+						vibrate: [200, 800, 200, 800, 200, 800]
+					});
+				}
+			});
+	};
+</script>
+
+</html>

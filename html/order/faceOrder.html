@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+	<title>title</title>
+	<link rel="stylesheet" type="text/css" href="../../css/api.css" />
+	<style>
+		html,
+		body {
+			margin: 0;
+			padding: 0;
+			height: 100%;
+			width: 100%;
+			background: rgba(231, 237, 248, 1);
+		}
+
+		#app {
+			margin: 0;
+			padding: 0;
+			height: 100%;
+			width: 100%;
+			font-family: SourceHanSansCN-Regular;
+			font-weight: 400;
+			color: rgba(51, 51, 51, 1);
+		}
+
+		.orderList {
+			padding: .1rem 1rem;
+			height: auto;
+		}
+
+		.order {
+			margin-bottom: 1rem;
+			width: 100%;
+			height: 14rem;
+			background: url(../../image/order/order-bg.png) no-repeat;
+			background-size: 100% 100%;
+		}
+
+		.top {
+			padding-top: .4rem;
+			height: 2rem;
+			display: flex;
+			flex-direction: row;
+			margin-top: .2rem;
+		}
+
+		li {
+			display: flex;
+			flex-direction: row;
+			height: 2rem;
+			line-height: 2rem;
+		}
+
+		.type {
+			flex: 1;
+			display: flex;
+			flex-direction: row;
+			justify-content: flex-end;
+		}
+
+		.alarmtype {
+			padding-left: 2rem;
+			display: flex;
+			flex-direction: row;
+			border-radius: 40px 0px 0px 40px;
+		}
+
+		.gaowei {
+			background: rgba(255, 173, 173, 1);
+		}
+
+		.xianyi {
+			background: rgba(173, 207, 255, 1);
+		}
+
+		.face {
+			background: rgba(255, 216, 173, 1);
+		}
+
+		.bianhao-title {
+			padding-left: .5rem;
+		}
+
+		.number {
+			margin-left: .3rem;
+		}
+
+		.span-gaowei {
+			color: rgba(230, 76, 76, 1);
+			padding: 0 .5rem;
+		}
+
+		.span-xianyi {
+			color: rgba(51, 128, 237, 1);
+			padding: 0 .5rem;
+		}
+
+		.span-face {
+			color: rgba(255, 132, 0, 1);
+			padding: 0 .5rem;
+		}
+
+		.icon {
+			width: 1.5rem;
+			height: 2rem;
+		}
+
+		.icon-renwu {
+			background: url(../../image/renwu/renwu.png) center no-repeat;
+			background-size: contain;
+		}
+
+		.icon-gaowei {
+			background: url(../../image/order/gaowei.png) center no-repeat;
+			background-size: contain;
+		}
+
+		.icon-dingwei {
+			background: url(../../image/renwu/dingwei.png) center no-repeat;
+			background-size: contain;
+		}
+
+		.icon-zhishen {
+			background: url(../../image/renwu/zhishen.png) center no-repeat;
+			background-size: contain;
+		}
+
+		.icon-rengong {
+			background: url(../../image/renwu/rengong.png) center no-repeat;
+			background-size: contain;
+		}
+
+		.icon-shijian {
+			background: url(../../image/renlian/jiaofuriqi.png) center no-repeat;
+			background-size: contain;
+		}
+		.icon-yuanyin {
+			background: url(../../image/renwu/yuanyin.png) center no-repeat;
+			background-size: contain;
+		}
+
+		.icon-jielun {
+			background: url(../../image/order/wupinjiancha.png) center no-repeat;
+			background-size: contain;
+		}
+
+		.icon-type {
+			background: url(../../image/order/baojing.png) center no-repeat;
+			background-size: contain;
+		}
+
+		.icon-xianyi {
+			background: url(../../image/order/xianyi.png) center no-repeat;
+			background-size: contain;
+		}
+
+		.icon-face {
+			background: url(../../image/order/renlian.png) center no-repeat;
+			background-size: contain;
+		}
+
+		.icon-name {
+			background: url(../../image/renlian/name.png) center no-repeat;
+			background-size: contain;
+		}
+
+		.center {
+			display: flex;
+			flex-direction: row;
+			padding: .5rem 1rem;
+		}
+
+		.img {
+			width: 47%;
+			height: 7.5rem;
+			border: 1px solid rgba(204, 204, 204, 1);
+			margin-left: .5rem;
+			display: flex;
+			flex-direction: column;
+			overflow: hidden;
+		}
+
+		img {
+			/*width: 100%;*/
+			width: auto;
+			height: 100%;
+			align-self: center;
+		}
+
+		.detail {
+			padding: .7rem .7rem 1rem 1.3rem;
+		}
+
+		.title {
+			padding: 0 .5rem;
+		}
+
+		.jielun {
+			margin: .1rem 0 0 .6rem;
+			border-radius: 6px;
+			min-width: 3rem;
+			text-align: center;
+			padding: .1rem 0.5rem;
+			height: 1.5rem;
+			line-height: 1.5rem;
+			font-size: 14px;
+		}
+
+		.jielun-xingli {
+			color: rgba(51, 128, 237, 1);
+			background: rgba(51, 128, 237, 0.1);
+		}
+
+		.jielun-face {
+			color: rgba(255, 132, 0, 1);
+			background: rgba(255, 132, 0, 0.1);
+		}
+		.jielun-xianyi {
+			background: rgba(230, 76, 76, 0.1);
+			color: rgba(230, 76, 76, 1);
+		}
+		.jielun-bottom {
+			color: rgba(255, 255, 255, 1);
+			background: rgba(230, 76, 76, 1);
+			border-radius: 6px;
+			min-width: 4rem;
+			text-align: center;
+			padding: .1rem 0.5rem;
+			height: 1.5rem;
+			line-height: 1.5rem;
+			margin-right: .3rem;
+		}
+
+		.jielun-kouliu {
+			color: rgba(255, 255, 255, 1);
+			background: rgba(230, 76, 76, 1);
+		}
+
+		.jielun-name {
+			color: rgba(255, 255, 255, 1);
+			background: rgba(51, 128, 237, 1);
+		}
+
+		.bottom {
+			padding: .3rem .5rem;
+			height: 3rem;
+			line-height: 3rem;
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+		}
+
+		.toTop {
+			position: fixed;
+			bottom: 40px;
+			right: 0;
+			width: 50px;
+			height: 50px;
+			background: url(../../image/toTop.png) center no-repeat;
+			background-size: 100% 100%;
+		}
+
+		.loading {
+			/*position: fixed;*/
+			/*bottom: 0;*/
+			height: 40px;
+			width: 100%;
+			background: rgba(0, 0, 0, 0.1);
+			border-radius: 100% 100% 0 0;
+		}
+
+		.noData {
+			text-align: center;
+			margin-top: 40px;
+		}
+
+		[v-cloak] {
+			display: none !important;
+		}
+	</style>
+</head>
+
+<body>
+	<div id="app" v-cloak>
+		<div class="orderList" v-if="faceTask.length>0">
+			<div class="order" v-for="item in faceTask" :key="item.TaskID" @click="openDetail(item)">
+				<div class="top">
+					<li class="bianhao-title">
+						<span class="icon icon-renwu"></span>
+						<span class="number">任务编号：{{item.TaskID}}</span>
+					</li>
+					<li class="type">
+						<div class="alarmtype face">
+							<span class="icon icon-face"></span>
+							<span class="span-face">人脸报警</span>
+						</div>
+					</li>
+				</div>
+				<div class="center">
+					<div class="img">
+						<img :src="item.ImageURL" @click="imageView(item.ImageURL,event)" />
+					</div>
+					<div class="detail">
+						<li>
+							<span class="icon icon-dingwei"></span>
+							<span class="jielun jielun-face">{{item.GateName}}</span>
+						</li>
+						<li>
+							<span class="icon icon-type"></span>
+							<!-- <span class="title">报警类型</span> -->
+							<span class="jielun jielun-face">人脸报警</span>
+						</li>
+						<li>
+							<span class="icon icon-yuanyin"></span>
+							<!-- <span class="title">报警原因</span> -->
+							<span class="jielun jielun-xianyi">{{item.FaceWarnType}}</span>
+						</li>
+					</div>
+				</div>
+				<div class="bottom">
+					<li>
+						<span class="icon icon-shijian"></span>
+						<span class="title">报警时间：{{item.CreateTime}}</span>
+					</li>
+					<li class="type">
+						<span class="icon icon-name"></span>
+						<span class="title">姓名</span>
+						<span class="jielun-bottom jielun-name">{{item.Name}}</span>
+					</li>
+				</div>
+			</div>
+		</div>
+		<div class="noData" v-else>暂无数据</div>
+		<div class="toTop" onclick="toTop()">
+
+		</div>
+		<div :class="loading?'loading':''">
+		</div>
+	</div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/api_extend.js"></script>
+<script type="text/javascript" src="../../script/vue.min.js"></script>
+<script type="text/javascript" src="../../script/jquery.min.js"></script>
+<script>
+	var vm;
+
+	function initvm() {
+		vm = new Vue({
+			el: '#app',
+			data: {
+				faceTask: [],
+				PageIndex: 1,
+				PageSize: 10,
+				loading: false
+			},
+			methods: {
+				openDetail: function(item) {
+					$api.setStorage("frameName", "faceDetail");
+					api.openWin({
+						name: 'faceDetail',
+						url: './faceDetail.html',
+						animation: {
+							type: "movein", //动画类型（详见动画类型常量）
+							subType: "from_right", //动画子类型（详见动画子类型常量）
+							duration: 300 //动画过渡时间，默认300毫秒
+						},
+						pageParam: {
+							TaskID: item.TaskID
+						}
+					})
+				},
+				imageView: function(image_, event_) {
+					var url_ = "../imageView/imageViewFrame.html"
+					$api.imageView(image_, 0, event_, url_);;
+				},
+			}
+		})
+	}
+	apiready = function() {
+		initvm();
+		var param = {
+			UserId: $api.getStorage('userInfoData').UserID,
+			PageIndex: vm.PageIndex,
+			PageSize: vm.PageSize,
+			TaskType: 3
+		};
+		getTaskList(param);
+		api.addEventListener({
+			name: 'scrolltobottom',
+			extra: {
+				threshold: 0 //设置距离底部多少距离时触发，默认值为0，数字类型
+			}
+		}, function(ret, err) {
+			if(ajaxing){
+				return;
+			}
+		vm.loading = true;
+		vm.PageIndex++;
+		var param = {
+			UserId: $api.getStorage('userInfoData').UserID,
+			PageIndex: vm.PageIndex,
+			PageSize: vm.PageSize,
+			TaskType: 3
+		};
+			getTaskList(param);
+		});
+	};
+	//获取所有订单列表
+	var ajaxing=false;
+	function getTaskList(param) {
+		ajaxing=true;
+		api.showProgress();
+		$api.ajax({
+			url: rootURL_web + '/api/DaXing_Mobile/GetMyCompletedTask',
+			method: "get",
+			values: param,
+		}, function(ret, err) {
+			console.warn("--------历史查验-------");
+			console.warn(JSON.stringify(ret));
+			console.warn(JSON.stringify(err));
+			api.hideProgress();
+			if (ret) {
+				if (ret.success) {
+						ajaxing=false;
+					//					vm.allTaskList.concat(ret.data);
+					for (var i = 0; i < ret.data.length; i++) {
+						vm.faceTask.push(ret.data[i]);
+					}
+				}
+			} else {
+				$api.toast('出错了');
+			}
+			vm.loading = false;
+		})
+	}
+	//返回顶部
+	function toTop() {
+		//一键回到顶部
+		api.pageUp({
+			top: true
+		}, function(ret, err) {
+			if (!ret.scrolled) { //是否滚动，为false时说明当前页面已经到达顶部了
+				//alert("已经滚动到顶部了");
+			}
+		});
+	}
+</script>
+
+</html>

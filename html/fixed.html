@@ -1,0 +1,241 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>fixedPane</title>
+		<link rel="stylesheet" type="text/css" href="../css/api.css" />
+		<style>
+			html,
+			body {
+				margin: 0;
+				padding: 0;
+				height: 100%;
+				width: 100%;
+				background: rgba(255, 255, 255, 1);
+			}
+
+			#app {
+				margin: 0;
+				padding: 0;
+				height: 100%;
+				width: 100%;
+			}
+
+			.userInfo {
+				display: flex;
+				flex-direction: row;
+				background: linear-gradient(-30deg, rgba(40, 99, 183, 1), rgba(12, 68, 146, 1));
+				height: 12rem;
+			}
+
+			.header {
+				margin: 3rem 2rem 2rem 2rem;
+				width: 8rem;
+				height: 8rem;
+				border-radius: 50%;
+			}
+
+			.info {
+				margin-top: 4.5rem;
+			}
+
+			.username {
+				font-size: 30px;
+				font-family: SourceHanSansCN-Regular;
+				font-weight: bold;
+				color: rgba(255, 255, 255, 1);
+			}
+
+			.role {
+				margin-top: 1rem;
+				font-size: 20px;
+				font-family: SourceHanSansCN-Regular;
+				font-weight: 400;
+				color: rgba(251, 158, 37, 1);
+				background: rgba(255, 255, 255, 1);
+				border-radius: 28px;
+				text-align: center;
+				padding: 0 .5rem;
+			}
+
+			li {
+				padding: 2rem;
+				border-bottom: 1px solid #d4d3d3;
+				display: flex;
+				flex-direction: row;
+			}
+
+			.icon {
+				margin-right: 2rem;
+				width: 40px;
+				height: 40px;
+			}
+
+			.nav {
+				height: 40px;
+				line-height: 40px;
+				font-size: 20px;
+				font-family: SourceHanSansCN-Regular;
+				font-weight: 400;
+				color: rgba(51, 51, 51, 1);
+			}
+
+			.icon-renwu {
+				background: url(../image/renwu.png) center no-repeat;
+				background-size: contain;
+			}
+
+			.icon-chayan {
+				background: url(../image/chayan.png) center no-repeat;
+				background-size: contain;
+			}
+
+			.icon-xiaoxi {
+				background: url(../image/xiaoxi.png) center no-repeat;
+				background-size: contain;
+			}
+
+			.icon-shezhi {
+				background: url(../image/dingwei.png) center no-repeat;
+				background-size: contain;
+			}
+
+			.icon-logout {
+				background: url(../image/logout.png) center no-repeat;
+				background-size: contain;
+			}
+
+			.liActive {
+				background: rgba(231, 237, 248, 1);
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="app">
+			<div class="userInfo">
+				<div class="header">
+					<img src="../image/head.png" style="width: 100%;height: 100%;" />
+				</div>
+				<div class="info">
+					<p class="username">{{user}}</p>
+					<p class="role">{{role}}</p>
+				</div>
+			</div>
+			<ul>
+				<!-- <li tapmode="liActive" onclick="openTask()">
+					<a class="icon icon-renwu"></a>
+					<a class="nav">报警跟踪任务</a>
+				</li> -->
+				<li tapmode="liActive" onclick="openOrder()">
+					<a class="icon icon-chayan"></a>
+					<a class="nav">查验历史</a>
+				</li>
+				<li tapmode="liActive" onclick="openMessage()">
+					<a class="icon icon-xiaoxi"></a>
+					<a class="nav">消息中心</a>
+				</li>
+				<li tapmode="liActive" onclick="openSelectArea()">
+					<a class="icon icon-shezhi"></a>
+					<a class="nav">工作区域设置</a>
+				</li>
+				<li tapmode="liActive" onclick="logout()">
+					<a class="icon icon-logout"></a>
+					<a class="nav">退出</a>
+				</li>
+			</ul>
+		</div>
+	</body>
+	<script type="text/javascript" src="../script/api.js"></script>
+	<script type="text/javascript" src="../script/api_extend.js"></script>
+	<script type="text/javascript" src="../script/vue.min.js"></script>
+	<script type="text/javascript" src="../script/jquery.min.js"></script>
+	<script type="text/javascript">
+		var vm;
+		function initvm() {
+			vm = new Vue({
+				el: '#app',
+				data: {
+					user:'',
+					role:''
+				},
+				mounted:function() {
+					this.user=$api.getStorage('userInfoData').TrueName;
+					this.role=$api.getStorage('userInfoData').RoleName;
+				}
+			})
+		}
+		apiready = function() {
+			initvm()
+			api.setStatusBarStyle({
+				style: 'dark',
+				color: '#000'
+			});
+			$api.fixStatusBar($api.dom('nav'));
+		};
+
+		function openSelectArea() {
+//			api.openWin({
+//				name: 'selectArea',
+//				url: './selectArea/selectArea.html',
+//			});
+			api.openWin({
+				name: 'selectArea',
+				url: './selectArea/selectArea.html',
+				animation: {
+					type: 'push'
+				},
+				pageParam: {
+					type: 1,
+				}
+			});
+		};
+
+		function openMessage() {
+			api.openWin({
+				name: 'message',
+				url: './message/message.html',
+				animation: {
+					type: 'push'
+				}
+			});
+		}
+
+		function openOrder() {
+			api.openWin({
+				name: 'order',
+				url: './order/order_tab.html',
+				animation: {
+					type: 'push'
+				}
+			});
+		}
+
+		function openTask() {
+			api.openDrawerLayout({
+				name: 'slide',
+				url: './slide.html',
+				animation: {
+					type: 'push'
+				},
+				leftPane: {
+					name: 'fixed',
+					url: './fixed.html',
+					edge: 100
+				}
+			});
+		}
+
+		function logout() {
+			$api.send('logOut');
+			api.openWin({
+				name: "login",
+				url: './login/login.html',
+			})
+		}
+	</script>
+
+</html>
